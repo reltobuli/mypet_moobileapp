@@ -16,6 +16,8 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text('data'),
+            Text('data'),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
