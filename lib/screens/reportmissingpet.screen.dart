@@ -1,163 +1,149 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:mypetapp/screens/boarding.screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 
-class ReportMissingPetPage extends StatelessWidget {
+class ReportMissingPetPage extends StatefulWidget {
   const ReportMissingPetPage({Key? key}) : super(key: key);
+
+  @override
+  _ReportMissingPetPageState createState() => _ReportMissingPetPageState();
+}
+
+class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+  final TextEditingController petIdController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  File? _imageFile; // Variable to hold the selected image file
+
+  Future<void> reportMissingPet() async {
+    final url = Uri.parse('http://127.0.0.1:8006/api/Petowner/report/report-missing-pet'); // Replace with your actual API endpoint
+
+    // Create multipart request for uploading image
+    var request = http.MultipartRequest('POST', url);
+    request.fields.addAll({
+      'name': nameController.text,
+      'type': typeController.text,
+      'gender': genderController.text,
+      'age': ageController.text,
+      'color': colorController.text,
+      'pet_id': petIdController.text,
+      'address': addressController.text,
+    });
+
+    // Add image file to the request if available
+    if (_imageFile != null) {
+      request.files.add(await http.MultipartFile.fromPath('picture', _imageFile!.path));
+    }
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Pet reported successfully');
+      // Handle success actions
+    } else {
+      print('Error reporting pet: ${response.reasonPhrase}');
+      // Handle error cases
+    }
+  }
+
+  Future<void> _selectImage() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _imageFile = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop(BoardingPage());
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-        ),
-       
-        centerTitle: true, // Center the title in the AppBar
-        actions: const [ // Adding an empty action widget to balance the leading widget
-          SizedBox(width: 48), // Adjust the width to balance the back button
-        ],
+        title: const Text('Report Missing Pet'),
       ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05), // Adjust padding based on screen width
+              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
                     child: Text(
                       'REPORT MISSING PET',
                       style: TextStyle(
                         color: Color.fromARGB(255, 3, 133, 125),
-                        fontSize: 30, // Increased font size
-                        fontWeight: FontWeight.bold, // Added font weight
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.add_a_photo, color: Color.fromARGB(255, 3, 133, 125)),
-                      SizedBox(width: 8),
-                      Text(
-                        'Add Photo',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 3, 133, 125),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
+                  ElevatedButton(
+                    onPressed: _selectImage,
+                    child: _imageFile == null
+                        ? Text('Select Image')
+                        : Text('Image Selected'),
                   ),
-                  const SizedBox(height: 30), // Add spacing below the photo row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'Name'),
-                      ),
-                      const SizedBox(width: 10), // Add spacing between the boxes
-                      Expanded(
-                        child: _buildTextField(label: 'Type'),
-                      ),
-                    ],
+                  SizedBox(height: 20),
+                  _buildTextField(label: 'Name', controller: nameController),
+                  SizedBox(height: 10),
+                  _buildTextField(label: 'Type', controller: typeController),
+                  SizedBox(height: 10),
+                  _buildTextField(label: 'Gender', controller: genderController),
+                  SizedBox(height: 10),
+                  _buildTextField(label: 'Age', controller: ageController),
+                  SizedBox(height: 10),
+                  _buildTextField(label: 'Color', controller: colorController),
+                  SizedBox(height: 10),
+                  _buildTextField(label: 'PetID', controller: petIdController),
+                  SizedBox(height: 10),
+                  _buildTextField(label: 'Address', controller: addressController),
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: reportMissingPet,
+                    child: Text('REPORT', style: TextStyle(color: Colors.white)),
                   ),
-                  const SizedBox(height: 20), // Add spacing between the rows
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'Gender'),
-                      ),
-                      const SizedBox(width: 10), // Add spacing between the boxes
-                      Expanded(
-                        child: _buildTextField(label: 'Age'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20), // Add spacing between the rows
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'Color'),
-                      ),
-                      const SizedBox(width: 10), // Add spacing between the boxes
-                      Expanded(
-                        child: _buildTextField(label: 'PetID'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20), // Add spacing between the rows
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'Address'),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 30), // Add spacing between the rows
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Handle add pet button press
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromARGB(255, 3, 133, 125), // Change the button color here
-                        padding: const EdgeInsets.only(left: 30, right: 30,top: 10, bottom: 10) ,
-                        // Adjust padding
-                        minimumSize: const Size(20, 20), // Adjust the size
-                      ),
-                      child: const Text('REPORT', style: TextStyle(color: Colors.white)),
-                    ),
-                  ),
-                  SizedBox(height: 10,),
-                  Text('Your phone number will be displayed if a match is found ')
+                  SizedBox(height: 10),
+                  Text('Your phone number will be displayed if a match is found'),
                 ],
               ),
             ),
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _buildTextField({required String label}) {
+  Widget _buildTextField({required String label, required TextEditingController controller}) {
     return TextField(
+      controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
-        enabledBorder: const OutlineInputBorder(
+        labelStyle: TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
+        enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),
         ),
-        focusedBorder: const OutlineInputBorder(
+        focusedBorder: OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black),
         ),
       ),
     );
   }
 }
+
+
+
+
+

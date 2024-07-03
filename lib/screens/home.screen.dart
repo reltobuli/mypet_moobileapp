@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/screens/addpet.screen.dart';
-import 'package:mypetapp/screens/instruction_service.dart';
 import 'package:mypetapp/screens/reportmissingpet.screen.dart';
-import 'package:mypetapp/screens/instruction_service.screen.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -16,16 +14,6 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('data'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => InstructionsPage()),
-                );
-              },
-              child: Text('View Instructions'),
-            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {

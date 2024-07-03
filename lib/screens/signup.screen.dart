@@ -20,7 +20,7 @@ class SignupPage extends StatelessWidget {
   final TextEditingController confirmPasswordController = TextEditingController();
 
   Future<void> register(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/PetOwner/register');
+    final Uri uri = Uri.parse('http://127.0.0.1:8006/api/Petowner/register');
 
     try {
       final response = await http.post(
