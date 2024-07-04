@@ -8,16 +8,15 @@ import 'package:mypetapp/screens/home.screen.dart';
 
 class SignupPage extends StatelessWidget {
   SignupPage({Key? key}) : super(key: key);
-
+  
   final TextEditingController firstnameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-  final TextEditingController cityController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
   final TextEditingController dateOfBirthController = TextEditingController();
-  final TextEditingController locationController = TextEditingController();
-  final TextEditingController jobController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  
 
   Future<void> register(BuildContext context) async {
     final Uri uri = Uri.parse('http://127.0.0.1:8006/api/Petowner/register');
@@ -27,15 +26,16 @@ class SignupPage extends StatelessWidget {
         uri,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'full_name': firstnameController.text.trim(),
-          'date_of_birth': dateOfBirthController.text.trim(),
+          'fullname': firstnameController.text.trim(),
           'phone_number': phoneController.text.trim(),
+          'gender':genderController.text.trim(),
+             'date_of_birth': dateOfBirthController.text.trim(),
+                       'email': emailController.text.trim(),
+
           'city': cityController.text.trim(),
-          'location': locationController.text.trim(),
-          'job': jobController.text.trim(),
-          'email': emailController.text.trim(),
+         
           'password': passwordController.text.trim(),
-          'password_confirmation': confirmPasswordController.text.trim(),
+      
         }),
       );
 
@@ -135,58 +135,48 @@ class SignupPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: _buildTextField(
-                          label: 'Date of birth',
-                          controller: dateOfBirthController,
+                         child: _buildTextField(
+                          label: 'Phone number',
+                          controller: phoneController,
                         ),
                       ),
-                    ],
+                       Expanded(
+                        child: _buildTextField(
+                          label: 'gender',
+                          controller: genderController,
+                        ),
+                      ),
+                    ]
                   ),
                   const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
                         child: _buildTextField(
-                          label: 'Phone number',
-                          controller: phoneController,
+                          label: 'DOB',
+                          controller:dateOfBirthController ,
                         ),
                       ),
                       const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildTextField(
+                          label: 'email',
+                          controller: emailController,
+                        ),
+                      ),
+                    ],
+                  ),
+               
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
                       Expanded(
                         child: _buildTextField(
                           label: 'city',
                           controller: cityController,
                         ),
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(
-                          label: 'location',
-                          controller: locationController,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _buildTextField(
-                          label: 'Job',
-                          controller: jobController,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(
-                          label: 'Email',
-                          controller: emailController,
-                        ),
-                      ),
+                      
                       const SizedBox(width: 10),
                       Expanded(
                         child: _buildTextField(
@@ -195,14 +185,9 @@ class SignupPage extends StatelessWidget {
                           obscureText: true,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _buildTextField(
-                          label: 'Confirm Password',
-                          controller: confirmPasswordController,
-                          obscureText: true,
-                        ),
-                      ),
+
+                    
+                      
                     ],
                   ),
                   const SizedBox(height: 30),

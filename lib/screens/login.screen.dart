@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:mypetapp/screens/home.screen.dart';
 import 'package:mypetapp/screens/addpet.screen.dart';
+import 'package:mypetapp/screens/signup.screen.dart';
+
 
 
 class LoginPage extends StatelessWidget {
@@ -89,7 +91,10 @@ class LoginPage extends StatelessWidget {
                   'Login',
                   style: TextStyle(color: Colors.black),
                 ),
+                
               ),
+              TextButton(onPressed:(){  Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage()));}, 
+              child: Text('Sign up'))
             ],
           ),
         ),

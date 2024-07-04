@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/screens/login.screen.dart';
 import 'package:mypetapp/screens/signup.screen.dart';
-import 'package:mypetapp/screens/reportmissingpet.screen.dart';
+import 'package:mypetapp/screens/reportmissingpet_screen.dart';
 
 class BoardingPage extends StatelessWidget {
   const BoardingPage({Key? key}) : super(key: key);

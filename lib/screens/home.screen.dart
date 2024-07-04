@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/screens/addpet.screen.dart';
-import 'package:mypetapp/screens/reportmissingpet.screen.dart';
+import 'package:mypetapp/screens/reportmissingpet_screen.dart';
+import 'package:mypetapp/screens/profile_screen.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: AppBar(
+      appBar: AppBar(
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -28,34 +29,50 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
-
-           
             Container(
-              padding: EdgeInsets.only(top:100, right:200),
+              padding: EdgeInsets.only(top: 100, right: 200),
               margin: EdgeInsets.all(20),
               color: Color.fromARGB(255, 255, 253, 253),
-              child: Image.asset('/Users/raghad/Desktop/mypetapp/assets/dogre.png',
-               height: 100, 
-               fit: BoxFit.fill,
-              )
+              child: Image.asset(
+                '/Users/raghad/Desktop/mypetapp/assets/dogre.png',
+                height: 100,
+                fit: BoxFit.fill,
+              ),
             ),
-          Text('find pets to adopt'),
-          ElevatedButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context) => ReportMissingPetPage()));},
-           child: Text('click here')),
-       
-          ElevatedButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (context) => AddpetPage()));},
-           child: Text('add pet'))
-          
+            Text('Find pets to adopt'),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ReportMissingPetPage()));
+              },
+              child: Text('Click here'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => (AddpetPage())));
+              },
+              child: Text('Add pet'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => (EditProfilePage())));
+              },
+              child: Text('Edit profile'),
+            ),
           ],
-            )
-          ),
-
-          bottomNavigationBar: BottomNavigationBar(
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -68,6 +85,5 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
-    
   }
 }

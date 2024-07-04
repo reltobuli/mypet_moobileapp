@@ -7,12 +7,15 @@ class AddpetPage extends StatelessWidget {
   AddpetPage({Key? key}) : super(key: key);
 
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController ageController = TextEditingController();
   final TextEditingController typeController = TextEditingController();
-  final TextEditingController ownerIdController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+ 
 
   Future<void> _addPet(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/Petowner/add-pet');
+    final Uri uri = Uri.parse('http://127.0.0.1:8006/api/Petowner/add-pet');
 
     try {
       final response = await http.post(
@@ -23,9 +26,11 @@ class AddpetPage extends StatelessWidget {
         },
         body: jsonEncode({
           'name': nameController.text.trim(),
-          'age': int.parse(ageController.text.trim()),
           'type': typeController.text.trim(),
-          'owner_id': int.parse(ownerIdController.text.trim()),
+          'gender':genderController.text.trim(),
+          'age': int.parse(ageController.text.trim()),
+          'color':colorController.text.trim(),
+          'address':addressController.text.trim(),
         }),
       );
 
@@ -144,20 +149,28 @@ class AddpetPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: _buildTextField(label: 'Age', controller: ageController),
-                      ),
+                    child: _buildTextField(label: 'Type', controller: typeController), 
+                     ),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Row(
                     children: [
                       Expanded(
-                        child: _buildTextField(label: 'Type', controller: typeController),
+                        child: _buildTextField(label: 'Gender', controller: genderController),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: _buildTextField(label: 'Owner ID', controller: ownerIdController),
+                        child: _buildTextField(label: 'Age', controller: ageController),
                       ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(label: 'address', controller: addressController),
+                      ),
+                  
                     ],
                   ),
                   const SizedBox(height: 30),
