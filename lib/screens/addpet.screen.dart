@@ -12,7 +12,7 @@ class AddpetPage extends StatelessWidget {
   final TextEditingController ownerIdController = TextEditingController();
 
   Future<void> _addPet(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/PetOwner/add-pet');
+    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/Petowner/add-pet');
 
     try {
       final response = await http.post(
@@ -108,13 +108,13 @@ class AddpetPage extends StatelessWidget {
                   Row(
                     children: [
                       Image.asset(
-                        '/Users/raghad/Desktop/graduationproject/mypetapp/assets/puppy-removebg-preview.png',
+                        '/Users/raghad/Desktop/mypetapp/assets/puppy-removebg-preview.png',
                         height: 70,
                         fit: BoxFit.fill,
                       ),
                       const SizedBox(width: 190),
                       Image.asset(
-                        '/Users/raghad/Desktop/graduationproject/mypetapp/assets/catt-removebg-preview.png',
+                        '/Users/raghad/Desktop/mypetapp/assets/catt-removebg-preview.png',
                         height: 60,
                         fit: BoxFit.fill,
                       ),

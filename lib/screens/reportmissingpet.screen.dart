@@ -18,13 +18,25 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
   final TextEditingController colorController = TextEditingController();
   final TextEditingController petIdController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final TextEditingController tagIdController = TextEditingController();
+  final TextEditingController qrCodeController = TextEditingController();
+
   File? _imageFile; // Variable to hold the selected image file
+  bool _isLoading = false; // To show loading indicator
 
   Future<void> reportMissingPet() async {
+    print('Starting reportMissingPet');
+    setState(() {
+      _isLoading = true;
+    });
+
     final url = Uri.parse('http://127.0.0.1:8006/api/Petowner/report/report-missing-pet'); // Replace with your actual API endpoint
 
     // Create multipart request for uploading image
     var request = http.MultipartRequest('POST', url);
+    request.headers.addAll({
+      'Authorization': 'Bearer 5|J0JzOhrRtQdoe5aFKmZIE7Xx35ZRpni60mnowvzF3a164269',
+    });
     request.fields.addAll({
       'name': nameController.text,
       'type': typeController.text,
@@ -33,21 +45,74 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
       'color': colorController.text,
       'pet_id': petIdController.text,
       'address': addressController.text,
+      'tag_id': tagIdController.text,
+      'qrcode': qrCodeController.text,
     });
 
     // Add image file to the request if available
     if (_imageFile != null) {
+      print('Adding image to the request');
       request.files.add(await http.MultipartFile.fromPath('picture', _imageFile!.path));
     }
 
-    var response = await request.send();
+    try {
+      var response = await request.send();
+      print('Request sent. Status code: ${response.statusCode}');
 
-    if (response.statusCode == 200) {
-      print('Pet reported successfully');
-      // Handle success actions
-    } else {
-      print('Error reporting pet: ${response.reasonPhrase}');
-      // Handle error cases
+      if (response.statusCode == 200) {
+        print('Pet reported successfully');
+        // Show success message
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Success'),
+            content: const Text('Pet reported successfully'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } else {
+        var responseBody = await response.stream.bytesToString();
+        print('Error reporting pet: ${response.reasonPhrase}, Response Body: $responseBody');
+        // Show error message
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Error'),
+            content: Text('Error reporting pet: ${response.reasonPhrase}, Response Body: $responseBody'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      print('Error during request: $e');
+      // Show error message
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error'),
+          content: Text('Error during request: $e'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -57,6 +122,7 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     setState(() {
       if (pickedFile != null) {
         _imageFile = File(pickedFile.path);
+        print('Image selected: ${_imageFile!.path}');
       } else {
         print('No image selected.');
       }
@@ -79,8 +145,8 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 20.0),
                     child: Text(
                       'REPORT MISSING PET',
                       style: TextStyle(
@@ -93,30 +159,36 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
                   ElevatedButton(
                     onPressed: _selectImage,
                     child: _imageFile == null
-                        ? Text('Select Image')
-                        : Text('Image Selected'),
+                        ? const Text('Select Image')
+                        : const Text('Image Selected'),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildTextField(label: 'Name', controller: nameController),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildTextField(label: 'Type', controller: typeController),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildTextField(label: 'Gender', controller: genderController),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildTextField(label: 'Age', controller: ageController),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildTextField(label: 'Color', controller: colorController),
-                  SizedBox(height: 10),
-                  _buildTextField(label: 'PetID', controller: petIdController),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
+                  _buildTextField(label: 'Pet ID', controller: petIdController),
+                  const SizedBox(height: 10),
                   _buildTextField(label: 'Address', controller: addressController),
-                  SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: reportMissingPet,
-                    child: Text('REPORT', style: TextStyle(color: Colors.white)),
-                  ),
-                  SizedBox(height: 10),
-                  Text('Your phone number will be displayed if a match is found'),
+                  const SizedBox(height: 10),
+                  _buildTextField(label: 'Tag ID', controller: tagIdController),
+                  const SizedBox(height: 10),
+                  _buildTextField(label: 'QR Code', controller: qrCodeController),
+                  const SizedBox(height: 30),
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          onPressed: reportMissingPet,
+                          child: const
+                               
+                       Text('REPORT', style: TextStyle(color: Colors.white)),
+                        ),
                 ],
               ),
             ),
@@ -131,18 +203,17 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
-        enabledBorder: OutlineInputBorder(
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
+        enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),
         ),
-        focusedBorder: OutlineInputBorder(
+        focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black),
         ),
       ),
     );
   }
 }
-
 
 
 

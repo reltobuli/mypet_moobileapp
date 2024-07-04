@@ -15,7 +15,7 @@ class BoardingPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              '/Users/raghad/Desktop/graduationproject/mypetapp/assets/pawss.png',
+              '/Users/raghad/Desktop/mypetapp/assets/pawss.png',
               height: 62,
               fit: BoxFit.fill,
             ),
@@ -96,7 +96,7 @@ class BoardingPage extends StatelessWidget {
                       top: 10,
                       left: 38,
                       child: Image.asset(
-                        '/Users/raghad/Desktop/graduationproject/mypetapp/assets/dogre.png',
+                        '/Users/raghad/Desktop/mypetapp/assets/dogre.png',
                         height: 100,
                         width: 100,
                       ),
@@ -105,7 +105,7 @@ class BoardingPage extends StatelessWidget {
                       bottom: 40,
                       right: 22,
                       child: Image.asset(
-                        '/Users/raghad/Desktop/graduationproject/mypetapp/assets/cat.png',
+                        '/Users/raghad/Desktop/mypetapp/assets/cat.png',
                         height: 70,
                         width: 100,
                       ),

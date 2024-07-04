@@ -31,6 +31,13 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^0.13.4
+
+
+
+
+
+
+
   image_picker: ^0.8.4+3  
 
 
@@ -67,6 +74,9 @@ assets:
   assets/pawss.png
   assets/catt-removebg-preview.png
   assets/puppy-removebg-preview.png
+  assets/pawsssss.png
+  assets/catpaws.png
+
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
