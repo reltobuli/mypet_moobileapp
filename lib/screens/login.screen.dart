@@ -1,21 +1,21 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mypetapp/screens/home.screen.dart';
-import 'package:mypetapp/screens/addpet.screen.dart';
 import 'package:mypetapp/screens/signup.screen.dart';
 
-
-
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final storage = FlutterSecureStorage();
 
   Future<void> _login(BuildContext context, String email, String password) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/Petowner/login'); 
+    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/Petowner/login');
 
     try {
       final response = await http.post(
-        uri, 
+        uri,
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email,
@@ -25,14 +25,18 @@ class LoginPage extends StatelessWidget {
 
       if (response.statusCode == 200) {
         // Successful login
-        // Navigate to the next screen (e.g., home screen)
-        Navigator.push(context, MaterialPageRoute(builder: (context) => HomePage()));
+        final responseData = jsonDecode(response.body);
+        final token = responseData['token']; // Extract token from response
+
+        // Save token to secure storage
+        await storage.write(key: 'token', value: token);
+
+        // Navigate to home screen or profile page
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
         print('Login successful');
       } else {
-        // Print the response body for debugging
+        // Handle login failure
         print('Login failed: ${response.body}');
-        
-        // Handle other status codes (e.g., 401 for unauthorized)
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -55,9 +59,6 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController emailController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-    
     return Scaffold(
       body: SafeArea(
         child: Center(
@@ -74,7 +75,6 @@ class LoginPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                
               ),
               _buildTextField(label: 'email', controller: emailController),
               const SizedBox(height: 20),
@@ -91,10 +91,13 @@ class LoginPage extends StatelessWidget {
                   'Login',
                   style: TextStyle(color: Colors.black),
                 ),
-                
               ),
-              TextButton(onPressed:(){  Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage()));}, 
-              child: Text('Sign up'))
+              TextButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage()));
+                },
+                child: Text('Sign up'),
+              ),
             ],
           ),
         ),

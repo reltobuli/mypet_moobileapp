@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -17,11 +18,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isLoading = false;
+  final storage = FlutterSecureStorage();
+  String? _token;
 
   @override
   void initState() {
     super.initState();
-    fetchUserData();
+    _fetchToken();
+  }
+
+  Future<void> _fetchToken() async {
+    try {
+      final token = await storage.read(key: 'token');
+      print('Token retrieved: $token'); // Debug print
+
+      setState(() {
+        _token = token;
+      });
+
+      if (_token != null && _token!.isNotEmpty) {
+        fetchUserData(); // Fetch user data if token is available
+      } else {
+        print('Token is null or empty');
+        // Handle case where token is null or empty
+      }
+    } catch (e) {
+      print('Error fetching token: $e');
+      // Handle error fetching token
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -30,20 +54,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/profile'); // Replace with your actual API endpoint and IP address
+      final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/profile'); // Replace with your actual API endpoint
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 1|iiCI1blrWsHRFRPRZUX2WTS2v5I8yP0w4bSICrKv91ad14cf', // Replace with your actual token
+          'Authorization': 'Bearer $_token', // Use the stored token here
         },
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
+      print('Fetch user data request: ${response.request}');
+      print('Fetch user data response status: ${response.statusCode}');
+      print('Fetch user data response body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body)['user'];
+        print('User data fetched successfully: $data'); // Debug print
+
         setState(() {
           fullnameController.text = data['fullname'] ?? '';
           phoneNumberController.text = data['phone_number'] ?? '';
@@ -52,14 +79,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
           emailController.text = data['email'] ?? '';
           cityController.text = data['city'] ?? '';
         });
-        print('User data fetched successfully: $data');
       } else {
         // Handle error
         print('Error fetching user data: ${response.statusCode} ${response.reasonPhrase}');
         print('Response body: ${response.body}');
       }
     } catch (e) {
-      print('Exception caught: $e');
+      print('Exception caught during fetchUserData: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -73,12 +99,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/profile/update'); // Replace with your actual API endpoint and IP address
+      final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/profile/update'); // Replace with your actual API endpoint
       final response = await http.put(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 5|J0JzOhrRtQdoe5aFKmZIE7Xx35ZRpni60mnowvzF3a164269', // Replace with your actual token
+          'Authorization': 'Bearer $_token', // Use the stored token here
         },
         body: jsonEncode({
           'fullname': fullnameController.text,
@@ -139,37 +165,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ),
                     TextField(
                       controller: dateOfBirthController,
-                      decoration: InputDecoration(labelText: 'Date of Birth'),
-                    ),
-                    TextField(
-                      controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
-                    ),
-                    TextField(
-                      controller: cityController,
-                      decoration: InputDecoration(labelText: 'City'),
-                    ),
-                    TextField(
-                      controller: passwordController,
-                      decoration: InputDecoration(labelText: 'Password'),
-                      obscureText: true,
-                    ),
-                    SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: updateProfile,
-                      child: Text('Update Profile'),
-                    ),
-                     SizedBox(height: 20),
-                    ElevatedButton(
-                       onPressed: () => Navigator.of(context).pop(),
-                      child: Text('Go back '),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
+                      decoration : InputDecoration(labelText: 'Date of Birth'),
+),
+TextField(
+controller: emailController,
+decoration: InputDecoration(labelText: 'Email'),
+),
+TextField(
+controller: cityController,
+decoration: InputDecoration(labelText: 'City'),
+),
+TextField(
+controller: passwordController,
+decoration: InputDecoration(labelText: 'Password'),
+obscureText: true,
+),
+SizedBox(height: 20),
+ElevatedButton(
+onPressed: updateProfile,
+child: Text('Update Profile'),
+),
+SizedBox(height: 20),
+ElevatedButton(
+onPressed: () => Navigator.of(context).pop(),
+child: Text('go back'),
+),
+],
+),
+),
+),
+);
+}
 }
 
 

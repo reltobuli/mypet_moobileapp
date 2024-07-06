@@ -57,15 +57,7 @@ class HomePage extends StatelessWidget {
               },
               child: Text('Add pet'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => (EditProfilePage())));
-              },
-              child: Text('Edit profile'),
-            ),
+           
               ElevatedButton(
               onPressed: () {
                 Navigator.push(
