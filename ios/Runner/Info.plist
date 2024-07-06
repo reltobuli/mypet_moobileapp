@@ -6,6 +6,8 @@
 <string>Need access to photo library for selecting images</string>
 <key>NSCameraUsageDescription</key>
 <string>Need access to camera for taking pictures</string>
+<key> NSPhotoLibraryUsageDescription</key>
+<string>we need access to your photo library to upload images for posts </string>
 
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

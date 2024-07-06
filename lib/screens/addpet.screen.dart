@@ -17,7 +17,7 @@ class AddpetPage extends StatelessWidget {
  
 
   Future<void> _addPet(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/Petowner/add-pet');
+    final Uri uri = Uri.parse('http://127.0.0.1:8001/api/Petowner/add-pet');
 
     try {
       final response = await http.post(

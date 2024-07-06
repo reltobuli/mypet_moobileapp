@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:mypetapp/screens/addpet.screen.dart';
 import 'package:mypetapp/screens/reportmissingpet_screen.dart';
 import 'package:mypetapp/screens/profile_screen.dart';
+import 'package:mypetapp/screens/shelters.screen.dart';
+import 'package:mypetapp/screens/veterinarycenter.screen.dart';
+import 'package:mypetapp/screens/instructions.screen.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -64,6 +67,27 @@ class HomePage extends StatelessWidget {
                     context, MaterialPageRoute(builder: (context) => (EditProfilePage())));
               },
               child: Text(' Profile'),
+            ),
+             ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => (ShelterListPage())));
+              },
+              child: Text('check shelters'),
+            ),
+             ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => (VeterinaryCenterListPage())));
+              },
+              child: Text('check veterinary'),
+            ),
+              ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => (InstructionListPage())));
+              },
+              child: Text('check instructions'),
             ),
           ],
         ),

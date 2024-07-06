@@ -17,7 +17,7 @@ class ImageUploadService {
     required String qrCode,
     required String token,
   }) async {
-    final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/report-missing-pet'); // Replace with your actual API endpoint
+    final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/report-missing-pet'); // Replace with your actual API endpoint
 
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
