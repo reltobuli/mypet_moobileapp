@@ -30,12 +30,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8006/api/Petowner/profile'); // Replace with your actual API endpoint and IP address
+      final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/profile'); // Replace with your actual API endpoint and IP address
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer 5|J0JzOhrRtQdoe5aFKmZIE7Xx35ZRpni60mnowvzF3a164269', // Replace with your actual token
+          'Authorization': 'Bearer 1|iiCI1blrWsHRFRPRZUX2WTS2v5I8yP0w4bSICrKv91ad14cf', // Replace with your actual token
         },
       );
 
@@ -73,7 +73,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8006/api/Petowner/profile/update'); // Replace with your actual API endpoint and IP address
+      final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/profile/update'); // Replace with your actual API endpoint and IP address
       final response = await http.put(
         url,
         headers: {
@@ -158,6 +158,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     ElevatedButton(
                       onPressed: updateProfile,
                       child: Text('Update Profile'),
+                    ),
+                     SizedBox(height: 20),
+                    ElevatedButton(
+                       onPressed: () => Navigator.of(context).pop(),
+                      child: Text('Go back '),
                     ),
                   ],
                 ),

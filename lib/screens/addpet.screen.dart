@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'package:mypetapp/screens/boarding.screen.dart';
 
@@ -15,7 +17,7 @@ class AddpetPage extends StatelessWidget {
  
 
   Future<void> _addPet(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8006/api/Petowner/add-pet');
+    final Uri uri = Uri.parse('http://127.0.0.1:8005/api/Petowner/add-pet');
 
     try {
       final response = await http.post(

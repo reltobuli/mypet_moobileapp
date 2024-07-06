@@ -9,15 +9,15 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Image.asset(
-              '/Users/raghad/Desktop/mypetapp/assets/pawssss.png',
-              height: 57,
-              fit: BoxFit.fill,
+              '/Users/raghad/Desktop/mypetapp/assets/catpaws.png',
+              height: 60,
             ),
           ],
         ),
+        
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         leading: IconButton(
           onPressed: () {
@@ -30,15 +30,16 @@ class HomePage extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              padding: EdgeInsets.only(top: 100, right: 200),
+              padding: EdgeInsets.only(top: 100, right: 20),
               margin: EdgeInsets.all(20),
               color: Color.fromARGB(255, 255, 253, 253),
-              child: Image.asset(
-                '/Users/raghad/Desktop/mypetapp/assets/dogre.png',
-                height: 100,
-                fit: BoxFit.fill,
+              child: Text('Help us find them',
+              style: TextStyle(
+                fontSize: 40
+              ),),
+              
               ),
-            ),
+            
             Text('Find pets to adopt'),
             ElevatedButton(
               onPressed: () {
@@ -64,6 +65,13 @@ class HomePage extends StatelessWidget {
                         builder: (context) => (EditProfilePage())));
               },
               child: Text('Edit profile'),
+            ),
+              ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => (EditProfilePage())));
+              },
+              child: Text(' Profile'),
             ),
           ],
         ),

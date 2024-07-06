@@ -1,11 +1,56 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ReportMissingPetPage extends StatefulWidget {
-  const ReportMissingPetPage({Key? key}) : super(key: key);
+class ImageUploadService {
+  Future<http.Response> uploadImage({
+    required File imageFile,
+    required String name,
+    required String type,
+    required String gender,
+    required String age,
+    required String color,
+    required String address,
+    required String qrCode,
+    required String token,
+  }) async {
+    final url = Uri.parse('http://127.0.0.1:8005/api/Petowner/report-missing-pet'); // Replace with your actual API endpoint
 
+    var request = http.MultipartRequest('POST', url);
+    request.headers.addAll({
+      'Authorization': 'Bearer $token',
+      'Content-Type':'multipart/form-data',
+    });
+    request.fields.addAll({
+     
+      'name': name,
+      'type': type,
+      'gender': gender,
+      'age': age,
+      'color': color,
+      'address': address,
+      'qrcode': qrCode,
+    });
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'picture',
+      imageFile.path,
+      contentType: MediaType('image', 'jpeg'), // Adjust content type based on your image type
+    ));
+
+    final streamedResponse = await request.send();
+    print(
+      'Response status: ${streamedResponse.statusCode}\n'
+      'Response body: ${await streamedResponse.stream.bytesToString()}',
+    );
+    return await http.Response.fromStream(streamedResponse);
+  }
+}
+
+class ReportMissingPetPage extends StatefulWidget {
   @override
   _ReportMissingPetPageState createState() => _ReportMissingPetPageState();
 }
@@ -21,85 +66,49 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
 
   File? _imageFile;
   bool _isLoading = false;
+  final ImageUploadService _imageUploadService = ImageUploadService();
+
+  Future<void> _selectImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
+  }
 
   Future<void> reportMissingPet() async {
-    print('Starting reportMissingPet');
+    if (_imageFile == null) {
+      _showError('Please select an image.');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
-    final url = Uri.parse('http://127.0.0.1:8006/api/Petowner/report/report-missing-pet'); 
-
-    var request = http.MultipartRequest('POST', url);
-    request.headers.addAll({
-      'Authorization': 'Bearer 5|J0JzOhrRtQdoe5aFKmZIE7Xx35ZRpni60mnowvzF3a164269',
-    });
-    request.fields.addAll({
-      'name': nameController.text,
-      'type': typeController.text,
-      'gender': genderController.text,
-      'age': ageController.text,
-      'color': colorController.text,
-      'address': addressController.text,
-      'qrcode': qrCodeController.text,
-    });
-
-    if (_imageFile != null) {
-      print('Adding image to the request');
-      request.files.add(await http.MultipartFile.fromPath('picture', _imageFile!.path));
-    }
-
     try {
-      var response = await request.send();
-      print('Request sent. Status code: ${response.statusCode}');
+      var response = await _imageUploadService.uploadImage(
+        imageFile: _imageFile!,
+        name: nameController.text,
+        type: typeController.text,
+        gender: genderController.text,
+        age: ageController.text,
+        color: colorController.text,
+        address: addressController.text,
+        qrCode: qrCodeController.text,
+        token: 'YOUR_BEARER_TOKEN_HERE',
+      );
 
       if (response.statusCode == 200) {
-        print('Pet reported successfully');
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Success'),
-            content: const Text('Pet reported successfully'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        _showSuccess('Pet reported successfully');
       } else {
-        var responseBody = await response.stream.bytesToString();
-        print('Error reporting pet: ${response.reasonPhrase}, Response Body: $responseBody');
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error'),
-            content: Text('Error reporting pet: ${response.reasonPhrase}, Response Body: $responseBody'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
+        var responseBody = jsonDecode(response.body);
+        _showError('Error: ${response.reasonPhrase}, Response Body: $responseBody');
       }
     } catch (e) {
-      print('Error during request: $e');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text('Error during request: $e'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      _showError('Error: $e');
     } finally {
       setState(() {
         _isLoading = false;
@@ -107,76 +116,69 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     }
   }
 
-  Future<void> _selectImage() async {
-    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+  void _showSuccess(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
 
-    setState(() {
-      if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
-        print('Image selected: ${_imageFile!.path}');
-      } else {
-        print('No image selected.');
-      }
-    });
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Report Missing Pet'),
+        title: Text('Report Missing Pet'),
       ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
-                    child: Text(
-                      'REPORT MISSING PET',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 3, 133, 125),
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                    onPressed: _selectImage,
-                    child: _imageFile == null
-                        ? const Text('Select Image')
-                        : const Text('Image Selected'),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(label: 'Name', controller: nameController),
-                  const SizedBox(height: 10),
-                  _buildTextField(label: 'Type', controller: typeController),
-                  const SizedBox(height: 10),
-                  _buildTextField(label: 'Gender', controller: genderController),
-                  const SizedBox(height: 10),
-                  _buildTextField(label: 'Age', controller: ageController),
-                  const SizedBox(height: 10),
-                  _buildTextField(label: 'Color', controller: colorController),
-                  const SizedBox(height: 10),
-                  _buildTextField(label: 'Address', controller: addressController),
-                  const SizedBox(height: 10),
-                  _buildTextField(label: 'QR Code', controller: qrCodeController),
-                  const SizedBox(height: 30),
-                  _isLoading
-                      ? const CircularProgressIndicator()
-                      : ElevatedButton(
-                          onPressed: reportMissingPet,
-                          child: const Text('REPORT', style: TextStyle(color: Colors.white)),
-                        ),
-                ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: _selectImage,
+                child: _imageFile == null ? Text('Upload Image') : Text('Image Selected'),
               ),
-            ),
+              SizedBox(height: 20),
+              _buildTextField(label: 'Name', controller: nameController),
+              _buildTextField(label: 'Type', controller: typeController),
+              _buildTextField(label: 'Gender', controller: genderController),
+              _buildTextField(label: 'Age', controller: ageController),
+              _buildTextField(label: 'Color', controller: colorController),
+              _buildTextField(label: 'Address', controller: addressController),
+              _buildTextField(label: 'QR Code', controller: qrCodeController),
+              SizedBox(height: 20),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: reportMissingPet,
+                      child: Text('Report Missing Pet'),
+                    ),
+            ],
           ),
         ),
       ),
@@ -199,6 +201,9 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     );
   }
 }
+  
+
+  
 
 
 
