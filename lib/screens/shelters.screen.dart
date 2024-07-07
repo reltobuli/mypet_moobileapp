@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart';
+import 'package:mypetapp/providers/api_service.dart';
 
 class ShelterListPage extends StatelessWidget {
   @override

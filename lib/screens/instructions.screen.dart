@@ -1,8 +1,8 @@
 // instruction_list_page.dart
 
 import 'package:flutter/material.dart';
-import 'api_service.dart';
-import 'instruction.dart';
+import 'package:mypetapp/providers/api_service.dart';
+import '../models/instruction.dart';
 
 class InstructionListPage extends StatelessWidget {
   @override

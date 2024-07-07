@@ -141,9 +141,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Profile'),
-      ),
+     
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : Padding(
@@ -166,39 +164,31 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     TextField(
                       controller: dateOfBirthController,
                       decoration : InputDecoration(labelText: 'Date of Birth'),
-),
-TextField(
-controller: emailController,
-decoration: InputDecoration(labelText: 'Email'),
-),
-TextField(
-controller: cityController,
-decoration: InputDecoration(labelText: 'City'),
-),
-TextField(
-controller: passwordController,
-decoration: InputDecoration(labelText: 'Password'),
-obscureText: true,
-),
-SizedBox(height: 20),
-ElevatedButton(
-onPressed: updateProfile,
-child: Text('Update Profile'),
-),
-SizedBox(height: 20),
-ElevatedButton(
-onPressed: () => Navigator.of(context).pop(),
-child: Text('go back'),
-),
-],
-),
-),
-),
-);
+                    ),
+                    TextField(
+                      controller: emailController,
+                      decoration: InputDecoration(labelText: 'Email'),
+                    ),
+                    TextField(
+                      controller: cityController,
+                      decoration: InputDecoration(labelText: 'City'),
+                    ),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(labelText: 'Password'),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 60),
+                    ElevatedButton(
+                      onPressed: updateProfile,
+                      child: Text('Update Profile'),
+                    ),
+                    SizedBox(height: 20),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
 }
-}
-
-
-
-
 

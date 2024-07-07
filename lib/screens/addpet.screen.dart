@@ -1,225 +1,207 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:convert';
-import 'package:mypetapp/screens/boarding.screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class AddpetPage extends StatelessWidget {
-  AddpetPage({Key? key}) : super(key: key);
+final storage = FlutterSecureStorage();
 
+class ImageUploadService {
+  Future<http.Response> uploadImage({
+    required File imageFile,
+    required String name,
+    required String type,
+    required String gender,
+    required String age,
+    required String color,
+    required String address,
+    required String token,
+    required String userID,
+  }) async {
+    final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/add-pet');
+
+    var request = http.MultipartRequest('POST', url);
+    request.headers.addAll({
+      'Authorization': 'Bearer $token',
+      'Content-Type': 'multipart/form-data',
+    });
+    request.fields.addAll({
+      'user_id': userID,
+      'name': name,
+      'type': type,
+      'gender': gender,
+      'age': age,
+      'color': color,
+      'address': address,
+    });
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'picture',
+      imageFile.path,
+      contentType: MediaType('image', 'jpeg'),
+    ));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+
+    if (response.statusCode == 201) {
+      return response;
+    } else {
+      throw Exception('Failed to add pet: ${response.reasonPhrase}');
+    }
+  }
+}
+
+class AddPetPage extends StatefulWidget {
+  @override
+  _AddPetPageState createState() => _AddPetPageState();
+}
+
+class _AddPetPageState extends State<AddPetPage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController typeController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
- 
+  final TextEditingController userIdController = TextEditingController();
 
-  Future<void> _addPet(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8001/api/Petowner/add-pet');
+  File? _imageFile;
+  bool _isLoading = false;
+  final ImageUploadService _imageUploadService = ImageUploadService();
 
-    try {
-      final response = await http.post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer 5|J0JzOhrRtQdoe5aFKmZIE7Xx35ZRpni60mnowvzF3a164269',
-        },
-        body: jsonEncode({
-          'name': nameController.text.trim(),
-          'type': typeController.text.trim(),
-          'gender':genderController.text.trim(),
-          'age': int.parse(ageController.text.trim()),
-          'color':colorController.text.trim(),
-          'address':addressController.text.trim(),
-        }),
-      );
+  Future<void> _selectImage() async {
+    final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
 
-      if (response.statusCode == 201) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => BoardingPage()));
-        print('Pet added successfully');
-      } else {
-        print('Failed to add pet: ${response.body}');
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Failed'),
-            content: Text('Invalid input: ${response.body}'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error during addpet: $e');
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Error'),
-          content: Text('An error occurred while adding the pet. Please try again.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    } else {
+      print('No image selected.');
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  Future<void> addPet() async {
+    if (_imageFile == null) {
+      _showError('Please select an image.');
+      return;
+    }
 
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop(BoardingPage());
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-        ),
-        centerTitle: true,
-        actions: const [
-          SizedBox(width: 48),
-        ],
-      ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.05),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
-                    child: Text(
-                      'ADD PET',
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 3, 133, 125),
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Image.asset(
-                        '/Users/raghad/Desktop/mypetapp/assets/puppy-removebg-preview.png',
-                        height: 70,
-                        fit: BoxFit.fill,
-                      ),
-                      const SizedBox(width: 190),
-                      Image.asset(
-                        '/Users/raghad/Desktop/mypetapp/assets/catt-removebg-preview.png',
-                        height: 60,
-                        fit: BoxFit.fill,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 60),
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.add_a_photo, color: Color.fromARGB(255, 3, 133, 125)),
-                      SizedBox(width: 8),
-                      Text(
-                        'Add Photo',
-                        style: TextStyle(
-                          color: Color.fromARGB(255, 3, 133, 125),
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'Name', controller: nameController),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                    child: _buildTextField(label: 'Type', controller: typeController), 
-                     ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'Gender', controller: genderController),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _buildTextField(label: 'Age', controller: ageController),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildTextField(label: 'address', controller: addressController),
-                      ),
-                  
-                    ],
-                  ),
-                  const SizedBox(height: 30),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            _addPet(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 3, 133, 125),
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                            minimumSize: const Size(10, 10),
-                          ),
-                          child: const Text('Add', style: TextStyle(color: Colors.white)),
-                        ),
-                      ),
-                      const SizedBox(width: 20),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String? token = await storage.read(key: 'token');
+
+      if (token == null) {
+        _showError('Token not found');
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      var response = await _imageUploadService.uploadImage(
+        imageFile: _imageFile!,
+        name: nameController.text,
+        type: typeController.text,
+        gender: genderController.text,
+        age: ageController.text,
+        color: colorController.text,
+        address: addressController.text,
+        userID: userIdController.text,
+        token: token,
+      );
+
+      if (response.statusCode == 201) {
+        _showSuccess('Pet added successfully');
+      } else {
+        var responseBody = jsonDecode(response.body);
+        _showError('Error: ${response.reasonPhrase}, Response Body: $responseBody');
+      }
+    } catch (e) {
+      _showError('Error during image upload: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _showSuccess(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Success'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
           ),
         ],
       ),
     );
   }
 
-  static Widget _buildTextField({required String label, required TextEditingController controller}) {
+  void _showError(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Pet'),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              ElevatedButton(
+                onPressed: _selectImage,
+                child: _imageFile == null ? Text('Upload Image') : Text('Image Selected'),
+              ),
+              SizedBox(height: 20),
+              _buildTextField(label: 'User ID', controller: userIdController),
+              _buildTextField(label: 'Name', controller: nameController),
+              _buildTextField(label: 'Type', controller: typeController),
+              _buildTextField(label: 'Gender', controller: genderController),
+              _buildTextField(label: 'Age', controller: ageController),
+              _buildTextField(label: 'Color', controller: colorController),
+              _buildTextField(label: 'Address', controller: addressController),
+              SizedBox(height: 20),
+              _isLoading
+                  ? CircularProgressIndicator()
+                  : ElevatedButton(
+                      onPressed: addPet,
+                      child: Text('Add Pet'),
+                    ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({required String label, required TextEditingController controller}) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(

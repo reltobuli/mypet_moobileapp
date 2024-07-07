@@ -14,49 +14,41 @@ class BoardingPage extends StatelessWidget {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text(
+              'MYPET',
+              style: TextStyle(fontSize: 15,
+              fontWeight: FontWeight.bold,
+              color: Color.fromARGB(255, 233, 134, 171)),
+            ),
             Image.asset(
-              '/Users/raghad/Desktop/mypetapp/assets/pawss.png',
-              height: 62,
+              '/Users/raghad/Desktop/mypetapp/assets/catpaws.png',
+              height: 40,
               fit: BoxFit.fill,
             ),
           ],
         ),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-        ),
+       
       ),
+      
       body: Stack(
         children: [
-          const Positioned(
-            top: 20,
-            left: 170,
-            child: Text(
-              'MyPet',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color.fromARGB(255, 243, 158, 189),
-              ),
-            ),
-          ),
+         
           Center(
             child: Column(
-              mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Stack(
                   clipBehavior: Clip.none,
                   children: [
                     Container(
+                      
                       margin: const EdgeInsets.all(40),
-                      padding: const EdgeInsets.all(40),
+                      padding: const EdgeInsets.all(100),
                       decoration: BoxDecoration(
                         color: const Color.fromARGB(255, 246, 230, 236),
                         border: Border.all(
-                          color: const Color.fromARGB(255, 255, 255, 255), 
+                          color:  Color.fromARGB(255, 3, 133, 125), 
                           width: 2, 
                         ),
                         borderRadius: BorderRadius.circular(30), 
@@ -93,12 +85,12 @@ class BoardingPage extends StatelessWidget {
                       ),
                     ),
                     Positioned(
-                      top: 10,
-                      left: 38,
+                      top: 4,
+                      left: 41,
                       child: Image.asset(
                         '/Users/raghad/Desktop/mypetapp/assets/dogre.png',
                         height: 100,
-                        width: 100,
+                        width: 136,
                       ),
                     ),
                     Positioned(
@@ -108,14 +100,15 @@ class BoardingPage extends StatelessWidget {
                         '/Users/raghad/Desktop/mypetapp/assets/cat.png',
                         height: 70,
                         width: 100,
+                        
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 20), // Space between the two containers
+                const SizedBox(height: 0), // Space between the two containers
                 Container(
                   margin: const EdgeInsets.all(20),
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(50),
                   decoration: BoxDecoration(
                     color: const Color.fromARGB(255, 3, 133, 125),
                     border: Border.all(
@@ -163,34 +156,14 @@ class BoardingPage extends StatelessWidget {
                     ],
                   ),
                 ),
-                 const SizedBox(height: 20), 
-                 ElevatedButton  (onPressed:() {  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));},  style: ElevatedButton.styleFrom(
-                          foregroundColor: Color.fromARGB(255, 255, 255, 255),
-                          backgroundColor: const Color.fromARGB(255, 3, 133, 125), // Button background color
-                        ), child: 
-                      Text('login'))
+              
               ],
                
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
-            label: 'Notifications',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
-      ),
+      
     );
   }
 }

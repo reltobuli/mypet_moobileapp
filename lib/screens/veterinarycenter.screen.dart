@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'api_service.dart'; // Import your API service and VeterinaryCenter model
-import 'veterinary_center.dart'; 
+import 'package:mypetapp/providers/api_service.dart';
+// Import your API service and VeterinaryCenter model
+import '../models/veterinary_center.dart';
+
 // Import the VeterinaryCenter model
 class VeterinaryCenterListPage extends StatelessWidget {
   @override

@@ -5,98 +5,42 @@ import 'package:mypetapp/screens/profile_screen.dart';
 import 'package:mypetapp/screens/shelters.screen.dart';
 import 'package:mypetapp/screens/veterinarycenter.screen.dart';
 import 'package:mypetapp/screens/instructions.screen.dart';
+import 'package:mypetapp/screens/qrcode.dart';
 
-class HomePage extends StatelessWidget {
+import '../models/missingpet.dart';
+
+class HomePage extends StatefulWidget {
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = <Widget>[
+    HomeScreen(),
+    Center(child: Text('Notifications Page')),
+    EditProfilePage(),
+    AddPetPage(),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Image.asset(
-              '/Users/raghad/Desktop/mypetapp/assets/catpaws.png',
-              height: 60,
-            ),
-          ],
-        ),
-        
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new),
-        ),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 100, right: 20),
-              margin: EdgeInsets.all(20),
-              color: Color.fromARGB(255, 255, 253, 253),
-              child: Text('Help us find them',
-              style: TextStyle(
-                fontSize: 40
-              ),),
-              
-              ),
-            
-            Text('Find pets to adopt'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => ReportMissingPetPage()));
-              },
-              child: Text('Click here'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => (AddpetPage())));
-              },
-              child: Text('Add pet'),
-            ),
-           
-              ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => (EditProfilePage())));
-              },
-              child: Text(' Profile'),
-            ),
-             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => (ShelterListPage())));
-              },
-              child: Text('check shelters'),
-            ),
-             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => (VeterinaryCenterListPage())));
-              },
-              child: Text('check veterinary'),
-            ),
-              ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => (InstructionListPage())));
-              },
-              child: Text('check instructions'),
-            ),
-          ],
-        ),
-      ),
+   
+      body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+            backgroundColor: Color.fromARGB(255, 235, 168, 190)
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
@@ -105,6 +49,85 @@ class HomePage extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.pets),
+            label: 'My Pet',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class HomeScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.only(top: 100, right: 20),
+            margin: EdgeInsets.all(20),
+            color: Color.fromARGB(255, 255, 253, 253),
+            child: Text(
+              'Help us find them',
+              style: TextStyle(fontSize: 40),
+            ),
+          ),
+          SizedBox(height: 30,),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ReportMissingPetPage()));
+            },
+            child: Text('Click here'),
+          ),
+         
+      
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => ShelterListPage()));
+            },
+            child: Text('Check shelters'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => VeterinaryCenterListPage()));
+            },
+            child: Text('Check veterinary'),
+          ),
+           ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MissingPetsPage()));
+            },
+            child: Text('Check missig pets'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => InstructionListPage()));
+            },
+            child: Text('Check instructions'),
+          ),
+           ElevatedButton(
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => QRCodePage()));
+            },
+            child: Text('Generate QRcode'),
           ),
         ],
       ),

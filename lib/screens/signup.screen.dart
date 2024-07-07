@@ -29,14 +29,11 @@ class SignupPage extends StatelessWidget {
           'fullname': firstnameController.text.trim(),
           'phone_number': phoneController.text.trim(),
           'gender':genderController.text.trim(),
-             'date_of_birth': dateOfBirthController.text.trim(),
-                       'email': emailController.text.trim(),
-
+          'date_of_birth': dateOfBirthController.text.trim(),
+          'email': emailController.text.trim(),
           'city': cityController.text.trim(),
-         
           'password': passwordController.text.trim(),
-      
-        }),
+       }),
       );
 
       print('Response status: ${response.statusCode}');
@@ -85,7 +82,6 @@ class SignupPage extends StatelessWidget {
       );
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -101,7 +97,7 @@ class SignupPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new),
         ),
         centerTitle: true,
-        actions: [
+        actions: const [
           SizedBox(width: 48),
         ],
       ),
@@ -140,55 +136,58 @@ class SignupPage extends StatelessWidget {
                           controller: phoneController,
                         ),
                       ),
-                       Expanded(
-                        child: _buildTextField(
-                          label: 'gender',
-                          controller: genderController,
-                        ),
-                      ),
                     ]
                   ),
                   const SizedBox(height: 20),
                   Row(
                     children: [
+                         Expanded(
+                        child: _buildTextField(
+                          label: 'gender',
+                          controller: genderController,
+                        ),
+                      ),
+                        const SizedBox(width: 10),
                       Expanded(
                         child: _buildTextField(
                           label: 'DOB',
                           controller:dateOfBirthController ,
                         ),
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                       Expanded(
                         child: _buildTextField(
                           label: 'email',
                           controller: emailController,
                         ),
                       ),
-                    ],
-                  ),
-               
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
+                    const SizedBox(width: 10),
                       Expanded(
                         child: _buildTextField(
                           label: 'city',
                           controller: cityController,
                         ),
                       ),
-                      
-                      const SizedBox(width: 10),
-                      Expanded(
+                      ],
+                  ),                
+                  const SizedBox(height: 20),
+                   Row(
+                    children: [
+                       Expanded(
                         child: _buildTextField(
-                          label: 'Password',
+                          label: 'password',
                           controller: passwordController,
-                          obscureText: true,
                         ),
                       ),
-
+               
                     
-                      
-                    ],
+                     
+                      ],
+                    
                   ),
                   const SizedBox(height: 30),
                   Row(

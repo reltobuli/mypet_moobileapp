@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'veterinary_center.dart'; // Import the VeterinaryCenter model
-import 'instruction.dart';
+import '../models/veterinary_center.dart';
+import '../models/instruction.dart';
 
 Future<List<dynamic>> fetchShelters() async {
   final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/shelters'));

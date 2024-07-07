@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+final storage = FlutterSecureStorage();
 
 class ImageUploadService {
   Future<http.Response> uploadImage({
@@ -16,16 +19,16 @@ class ImageUploadService {
     required String address,
     required String qrCode,
     required String token,
+    required String petId, // Added petId parameter
   }) async {
-    final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/report-missing-pet'); // Replace with your actual API endpoint
+    final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/report-missing-pet');
 
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({
       'Authorization': 'Bearer $token',
-      'Content-Type':'multipart/form-data',
+      'Content-Type': 'multipart/form-data',
     });
     request.fields.addAll({
-     
       'name': name,
       'type': type,
       'gender': gender,
@@ -33,20 +36,26 @@ class ImageUploadService {
       'color': color,
       'address': address,
       'qrcode': qrCode,
+      'pet_id': petId.toString(), // Include pet_id in fields
     });
 
     request.files.add(await http.MultipartFile.fromPath(
       'picture',
       imageFile.path,
-      contentType: MediaType('image', 'jpeg'), // Adjust content type based on your image type
+      contentType: MediaType('image', 'jpeg'),
     ));
 
+    // Send request
     final streamedResponse = await request.send();
-    print(
-      'Response status: ${streamedResponse.statusCode}\n'
-      'Response body: ${await streamedResponse.stream.bytesToString()}',
-    );
-    return await http.Response.fromStream(streamedResponse);
+    final response = await http.Response.fromStream(streamedResponse);
+
+    // Process response
+    if (response.statusCode == 200) {
+      print('Response body: ${response.body}');
+      return response;
+    } else {
+      throw Exception('Failed to report missing pet: ${response.reasonPhrase}');
+    }
   }
 }
 
@@ -62,11 +71,14 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+    final TextEditingController petIdController = TextEditingController(); 
   final TextEditingController qrCodeController = TextEditingController();
 
   File? _imageFile;
   bool _isLoading = false;
   final ImageUploadService _imageUploadService = ImageUploadService();
+
+  int petId = 1; // Example pet ID, replace with actual logic to get pet ID
 
   Future<void> _selectImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -75,6 +87,9 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
+      print('Image selected: ${_imageFile?.path}');
+    } else {
+      print('No image selected.');
     }
   }
 
@@ -89,6 +104,19 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     });
 
     try {
+      String? token = await storage.read(key: 'token'); // Retrieve token
+
+      if (token == null) {
+        _showError('Token not found');
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
+      print('Token retrieved: $token');
+      print('Attempting to upload image and report missing pet...');
+
       var response = await _imageUploadService.uploadImage(
         imageFile: _imageFile!,
         name: nameController.text,
@@ -98,8 +126,13 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
         color: colorController.text,
         address: addressController.text,
         qrCode: qrCodeController.text,
-        token: 'YOUR_BEARER_TOKEN_HERE',
+         petId: petIdController.text, 
+        token: token, // Pass token to service method
+         // Pass petId to service method
       );
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         _showSuccess('Pet reported successfully');
@@ -108,6 +141,7 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
         _showError('Error: ${response.reasonPhrase}, Response Body: $responseBody');
       }
     } catch (e) {
+      print('Error during image upload: $e');
       _showError('Error: $e');
     } finally {
       setState(() {
@@ -170,6 +204,7 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
               _buildTextField(label: 'Age', controller: ageController),
               _buildTextField(label: 'Color', controller: colorController),
               _buildTextField(label: 'Address', controller: addressController),
+               _buildTextField(label: 'Pet ID', controller: petIdController), 
               _buildTextField(label: 'QR Code', controller: qrCodeController),
               SizedBox(height: 20),
               _isLoading
@@ -201,7 +236,6 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     );
   }
 }
-  
 
   
 

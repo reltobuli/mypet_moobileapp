@@ -1,4 +1,3 @@
-// veterinary_center.dart
 
 class VeterinaryCenter {
   final int id;
