@@ -54,7 +54,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/profile'); // Replace with your actual API endpoint
+      final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/profile'); // Replace with your actual API endpoint
       final response = await http.get(
         url,
         headers: {
@@ -99,7 +99,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     });
 
     try {
-      final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/profile/update'); // Replace with your actual API endpoint
+      final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/profile/update'); // Replace with your actual API endpoint
       final response = await http.put(
         url,
         headers: {

@@ -13,7 +13,7 @@ class _QRCodePageState extends State<QRCodePage> {
 
   Future<void> generateQRCode(String data) async {
     final response = await http.get(
-      Uri.parse('http://127.0.0.1:8001/api/qrcode?data=${Uri.encodeComponent(data)}'),
+      Uri.parse('http://127.0.0.1:8000/api/qrcode?data=${Uri.encodeComponent(data)}'),
     );
 
     if (response.statusCode == 200) {

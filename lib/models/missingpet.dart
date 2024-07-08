@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class MissingPet {
-  final String picture;
+  final String? picture;
   final String name;
   final String type;
   final String gender;
-  final String age;
+  final int age;
   final String color;
   final String address;
   final String petId;
-  final String qrcode;
+  final String? qrcode;
 
   MissingPet({
     required this.picture,
@@ -55,13 +55,20 @@ class _MissingPetsPageState extends State<MissingPetsPage> {
   }
 
   Future<List<MissingPet>> fetchMissingPets() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/missing-pets'));
+    try {
+      final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/missing-pets'));
 
-    if (response.statusCode == 200) {
-      List<dynamic> body = json.decode(response.body)['missingPets'];
-      List<MissingPet> pets = body.map((dynamic item) => MissingPet.fromJson(item)).toList();
-      return pets;
-    } else {
+      if (response.statusCode == 200) {
+        print('Response body: ${response.body}'); // Debug print
+        List<dynamic> body = json.decode(response.body)['missingPets'];
+        List<MissingPet> pets = body.map((dynamic item) => MissingPet.fromJson(item)).toList();
+        return pets;
+      } else {
+        print('Failed to load missing pets. Status code: ${response.statusCode}');
+        throw Exception('Failed to load missing pets');
+      }
+    } catch (e) {
+      print('Error: $e'); // Debug print
       throw Exception('Failed to load missing pets');
     }
   }
@@ -87,7 +94,11 @@ class _MissingPetsPageState extends State<MissingPetsPage> {
               itemBuilder: (context, index) {
                 MissingPet pet = snapshot.data![index];
                 return ListTile(
-                  leading: Image.network('http://127.0.0.1:8001/storage/${pet.picture}'),
+                  leading: pet.picture != null
+                      ? Image.network('http://127.0.0.1:8000/storage/missing-pet-images/${pet.picture}', errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.pets);
+                        })
+                      : Icon(Icons.pets),
                   title: Text(pet.name),
                   subtitle: Text('Type: ${pet.type}\nGender: ${pet.gender}\nAge: ${pet.age}\nColor: ${pet.color}\nAddress: ${pet.address}'),
                 );

@@ -1,5 +1,3 @@
-// instruction.dart
-
 class Instruction {
   final int id;
   final String title;
@@ -9,6 +7,7 @@ class Instruction {
     required this.id,
     required this.title,
     required this.details,
+  
   });
 
   factory Instruction.fromJson(Map<String, dynamic> json) {

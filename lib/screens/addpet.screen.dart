@@ -20,7 +20,7 @@ class ImageUploadService {
     required String token,
     required String userID,
   }) async {
-    final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/add-pet');
+    final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/add-pet');
 
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({

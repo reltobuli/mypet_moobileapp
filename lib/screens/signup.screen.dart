@@ -19,7 +19,7 @@ class SignupPage extends StatelessWidget {
   
 
   Future<void> register(BuildContext context) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8001/api/Petowner/register');
+    final Uri uri = Uri.parse('http://127.0.0.1:8000/api/Petowner/register');
 
     try {
       final response = await http.post(

@@ -21,7 +21,7 @@ class ImageUploadService {
     required String token,
     required String petId, // Added petId parameter
   }) async {
-    final url = Uri.parse('http://127.0.0.1:8001/api/Petowner/report-missing-pet');
+    final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/report-missing-pet');
 
     var request = http.MultipartRequest('POST', url);
     request.headers.addAll({

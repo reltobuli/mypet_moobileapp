@@ -3,8 +3,21 @@ import 'package:http/http.dart' as http;
 import '../models/veterinary_center.dart';
 import '../models/instruction.dart';
 
+
+Future<List<Instruction>> fetchInstructions() async {
+  final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/instructions'));
+
+  if (response.statusCode == 200) {
+    List<dynamic> data = jsonDecode(response.body);
+    List<Instruction> instructions = data.map((json) => Instruction.fromJson(json)).toList();
+    return instructions;
+  } else {
+    throw Exception('Failed to load instructions');
+  }
+}
+
 Future<List<dynamic>> fetchShelters() async {
-  final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/shelters'));
+  final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/shelters'));
 
   if (response.statusCode == 200) {
     return jsonDecode(response.body);
@@ -14,7 +27,7 @@ Future<List<dynamic>> fetchShelters() async {
 }
 
 Future<List<VeterinaryCenter>> fetchVeterinaryCenters() async {
-  final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/veterinaries'));
+  final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/veterinaries'));
 
   if (response.statusCode == 200) {
     List<dynamic> data = json.decode(response.body);
@@ -25,13 +38,5 @@ Future<List<VeterinaryCenter>> fetchVeterinaryCenters() async {
   }
 }
 
-Future<List<Instruction>> fetchInstructions() async {
-  final response = await http.get(Uri.parse('http://127.0.0.1:8001/api/instructions'));
 
-  if (response.statusCode == 200) {
-    List<dynamic> data = json.decode(response.body);
-    return data.map((json) => Instruction.fromJson(json)).toList();
-  } else {
-    throw Exception('Failed to load instructions');
-  }
-}
+
