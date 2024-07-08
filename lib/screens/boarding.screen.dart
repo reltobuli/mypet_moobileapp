@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:mypetapp/screens/login.screen.dart';
 import 'package:mypetapp/screens/signup.screen.dart';
 import 'package:mypetapp/screens/reportmissingpet_screen.dart';
 
