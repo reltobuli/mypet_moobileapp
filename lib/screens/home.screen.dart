@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'adoptpet.screen.dart';
+
 import 'addpet.screen.dart';
 import 'profile_screen.dart';
-import 'editpetprofile.screen.dart';
-
+import 'petprofile.screen.dart';
 import 'reportmissingpet_screen.dart';
 import 'shelters.screen.dart';
 import 'veterinarycenter.screen.dart';
@@ -25,10 +24,8 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = <Widget>[
     HomeScreen(),
     Center(child: Text('Notifications Page')),
-
-AddPetPage(),
-EditProfilePage(),
-    
+    AddPetPage(),
+    EditProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -36,9 +33,6 @@ EditProfilePage(),
       _selectedIndex = index;
     });
   }
-
-
- 
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +49,11 @@ EditProfilePage(),
             icon: Icon(Icons.notifications),
             label: 'Notifications',
           ),
-         
           BottomNavigationBarItem(
             icon: Icon(Icons.pets),
             label: 'My Pet',
           ),
-           BottomNavigationBarItem(
+          BottomNavigationBarItem(
             icon: Icon(Icons.person),
             label: 'Profile',
           ),
@@ -143,21 +136,28 @@ class HomeScreen extends StatelessWidget {
             },
             child: Text('Generate QRcode'),
           ),
-           ElevatedButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => PetProfilePage()),
               );
             },
-            child: Text(' Pet profile'),
+            child: Text('Pet profile'),
           ),
-         
+           ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AdoptionPage()),
+              );
+            },
+            child: Text('Adoption'),
+          ),
         ],
       ),
     );
   }
-
-  
 }
+
 

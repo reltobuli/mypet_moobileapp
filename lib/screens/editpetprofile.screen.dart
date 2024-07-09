@@ -1,124 +1,256 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 final storage = FlutterSecureStorage();
 
-class PetProfilePage extends StatefulWidget {
+class EditProfilePage extends StatefulWidget {
+  final int petId;
+
+  EditProfilePage({required this.petId});
+
   @override
-  _PetProfilePageState createState() => _PetProfilePageState();
+  _EditProfilePageState createState() => _EditProfilePageState();
 }
 
-class _PetProfilePageState extends State<PetProfilePage> {
-  List<dynamic> pets = []; // List to store pets fetched from API
-  bool isLoading = true;
-  String error = '';
-  String? token; // Variable to store the token
+class _EditProfilePageState extends State<EditProfilePage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
+  final TextEditingController genderController = TextEditingController();
+  final TextEditingController ageController = TextEditingController();
+  final TextEditingController colorController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+
+  bool _isLoading = false;
+  String? _token;
 
   @override
   void initState() {
     super.initState();
-    fetchTokenAndPets(); // Fetch token and pets when the page loads
+    _fetchTokenAndPetData();
   }
 
-  Future<void> fetchTokenAndPets() async {
-    try {
-      // Fetch token from secure storage
-      token = await storage.read(key: 'token');
-      
-      // Fetch pets using the retrieved token
-      await fetchPets();
-    } catch (e) {
-      setState(() {
-        error = 'Failed to fetch token: $e';
-        isLoading = false;
-      });
-    }
-  }
-
-  Future<void> fetchPets() async {
-  final String apiUrl = 'http://127.0.0.1:8000/api/Petowner/pets';
-
-  if (token == null) {
-    setState(() {
-      error = 'Token is null. Authentication required.';
-      isLoading = false;
-    });
-    return;
-  }
-
-  final response = await http.get(
-    Uri.parse(apiUrl),
-    headers: {
-      'Authorization': 'Bearer $token',
-      'Accept': 'application/json',
-    },
-  );
-
-  if (response.statusCode == 200) {
-    // Parse the response body as a map
-    Map<String, dynamic> responseData = jsonDecode(response.body);
-
-    // Check if the 'pets' key exists in the response data
-    if (responseData.containsKey('pets')) {
-      setState(() {
-        pets = responseData['pets']; // Store the list of pets
-        isLoading = false;
-      });
+  Future<void> _fetchTokenAndPetData() async {
+    final storage = const FlutterSecureStorage();
+    _token = await storage.read(key: 'token');
+    if (_token != null) {
+      fetchPetData();
     } else {
+      // Handle token not found error
+      print("Token not found");
+    }
+  }
+
+ Future<void> fetchPetData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/pets/${widget.petId}');
+      print('Fetching pet data from: $url');  // Debug print
+      final response = await http.get(
+        url,
+        headers: {
+          'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+
+        setState(() {
+          nameController.text = data['name'] ?? '';
+          typeController.text = data['type'] ?? '';
+          genderController.text = data['gender'] ?? '';
+          ageController.text = data['age'].toString() ?? '';
+          colorController.text = data['color'] ?? '';
+          addressController.text = data['address'] ?? '';
+        });
+      } else {
+        // Handle error
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle exception
+      print("Exception: $e");
+    } finally {
       setState(() {
-        error = 'No pets found in response.';
-        isLoading = false;
+        _isLoading = false;
       });
     }
-  } else {
+  }
+  Future<void> giveUpPet(int petId) async {
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/pets/$petId/give-up');
+    print('Giving up pet at: $url');  // Debug print
+
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': 'Bearer $_token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Adoption status updated successfully
+      // Optionally update UI or display success message
+    } else {
+      // Handle error
+      print("Error: ${response.statusCode}");
+    }
+  } catch (e) {
+    // Handle exception
+    print("Exception: $e");
+  } finally {
     setState(() {
-      error = 'Error fetching pets: ${response.statusCode}';
-      isLoading = false;
+      _isLoading = false;
     });
   }
 }
 
+  Future<void> updatePetProfile() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/pets/profile/update/${widget.petId}');
+      final response = await http.put(
+        url,
+        headers: {
+          'Authorization': 'Bearer $_token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'name': nameController.text,
+          'type': typeController.text,
+          'gender': genderController.text,
+          'age': int.parse(ageController.text),
+          'color': colorController.text,
+          'address': addressController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Handle success
+        print("Pet profile updated successfully");
+      } else {
+        // Handle error
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle exception
+      print("Exception: $e");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Pets'),
+        title: const Text('Edit Pet Profile'),
       ),
-      body: Center(
-        child: isLoading
-            ? CircularProgressIndicator() // Show loading indicator while fetching
-            : error.isNotEmpty
-                ? Text(error) // Display error message if pets couldn't be loaded
-                : pets.isEmpty
-                    ? Text('No pets found.') // Display message if no pets are available
-                    : ListView.builder(
-                        itemCount: pets.length,
-                        itemBuilder: (context, index) {
-                          var pet = pets[index];
-                          return ListTile(
-                            leading: CircleAvatar(
-                              // Display pet's picture if available
-                              backgroundImage: pet['picture'] != null
-                                  ? NetworkImage('http://127.0.0.1:8000/storage/pictures/${pet['picture']}')
-                                  : AssetImage('assets/default_pet_image.png') as ImageProvider,
-                            ),
-                            title: Text(pet['name']),
-                            subtitle: Text('${pet['type']} - ${pet['gender']}'),
-                            onTap: () {
-                              // Navigate to edit page or view pet details
-                              // Example: Navigator.pushNamed(context, '/edit_pet/${pet['id']}');
-                            },
-                          );
-                        },
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
                       ),
-      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: typeController,
+                          decoration: const InputDecoration(
+                            labelText: 'Type',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: genderController,
+                          decoration: const InputDecoration(
+                            labelText: 'Gender',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: ageController,
+                          decoration: const InputDecoration(
+                            labelText: 'Age',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: colorController,
+                          decoration: const InputDecoration(
+                            labelText: 'Color',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: TextField(
+                          controller: addressController,
+                          decoration: const InputDecoration(
+                            labelText: 'Address',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                        giveUpPet(widget.petId);
+                      },
+                     child: Text('Give Up'),
+                      ),
+                      const SizedBox(height: 25),
+                      ElevatedButton(
+                        onPressed: updatePetProfile,
+                        child: const Text('Update Profile'),
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+              ),
+            ),
     );
+
+    
   }
 }
-
 
 
 

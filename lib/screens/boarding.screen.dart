@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/screens/signup.screen.dart';
 import 'package:mypetapp/screens/reportmissingpet_screen.dart';
+import '../models/missingpet.dart';
 
 class BoardingPage extends StatelessWidget {
   const BoardingPage({Key? key}) : super(key: key);
@@ -137,7 +138,7 @@ class BoardingPage extends StatelessWidget {
                       const SizedBox(height: 20), // Add space between the text and the button
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => ReportMissingPetPage()));
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => MissingPetsPage()));
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.black,
@@ -164,6 +165,7 @@ class BoardingPage extends StatelessWidget {
       ),
       
     );
+    
   }
 }
 
