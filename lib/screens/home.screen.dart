@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mypetapp/screens/addpet.screen.dart';
-import 'package:mypetapp/screens/reportmissingpet_screen.dart';
-import 'package:mypetapp/screens/profile_screen.dart';
-import 'package:mypetapp/screens/shelters.screen.dart';
-import 'package:mypetapp/screens/veterinarycenter.screen.dart';
-import 'package:mypetapp/screens/instructions.screen.dart';
-import 'package:mypetapp/screens/qrcode.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'addpet.screen.dart';
+import 'profile_screen.dart';
 
+import 'reportmissingpet_screen.dart';
+import 'shelters.screen.dart';
+import 'veterinarycenter.screen.dart';
+import 'instructions.screen.dart';
+import 'qrcode.dart';
 import '../models/missingpet.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,12 +19,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  final storage = FlutterSecureStorage();
 
   final List<Widget> _pages = <Widget>[
     HomeScreen(),
     Center(child: Text('Notifications Page')),
-    EditProfilePage(),
-    AddPetPage(),
+
+AddPetPage(),
+EditProfilePage(),
+    
   ];
 
   void _onItemTapped(int index) {
@@ -30,29 +36,32 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+
+ 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-   
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-            backgroundColor: Color.fromARGB(255, 235, 168, 190)
+            backgroundColor: Color.fromARGB(255, 235, 168, 190),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: 'Notifications',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+         
           BottomNavigationBarItem(
             icon: Icon(Icons.pets),
             label: 'My Pet',
+          ),
+           BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -78,59 +87,67 @@ class HomeScreen extends StatelessWidget {
               style: TextStyle(fontSize: 40),
             ),
           ),
-          SizedBox(height: 30,),
+          SizedBox(height: 30),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ReportMissingPetPage()));
+                context,
+                MaterialPageRoute(builder: (context) => ReportMissingPetPage()),
+              );
             },
             child: Text('Click here'),
           ),
-         
-      
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => ShelterListPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ShelterListPage()),
+              );
             },
             child: Text('Check shelters'),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => VeterinaryCenterListPage()));
+                context,
+                MaterialPageRoute(builder: (context) => VeterinaryCenterListPage()),
+              );
             },
             child: Text('Check veterinary'),
           ),
-           ElevatedButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => MissingPetsPage()));
+                context,
+                MaterialPageRoute(builder: (context) => MissingPetsPage()),
+              );
             },
-            child: Text('Check missig pets'),
+            child: Text('Check missing pets'),
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => InstructionListPage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => InstructionListPage()),
+              );
             },
             child: Text('Check instructions'),
           ),
-           ElevatedButton(
+          ElevatedButton(
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => QRCodePage()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => QRCodePage()),
+              );
             },
             child: Text('Generate QRcode'),
           ),
+         
         ],
       ),
     );
   }
+
+  
 }
+

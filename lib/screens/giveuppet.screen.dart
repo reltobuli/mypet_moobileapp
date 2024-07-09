@@ -1,35 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/providers/adoptionapis_service.dart'; // Make sure this path is correct
 
-class RequestAdoptionPage extends StatelessWidget {
-//  final ApiService apiService = ApiService();
+class GiveUpPetPage extends StatelessWidget {
+ // final ApiService apiService = ApiService();
   final int petId;
 
-  RequestAdoptionPage({required this.petId});
+  GiveUpPetPage({required this.petId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Request Adoption'),
+        title: Text('Give Up Pet'),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () async {
             try {
-          //    await apiService.requestAdoption(petId);
+          //    await apiService.giveUpPet(petId);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Adoption request sent.')),
+                SnackBar(content: Text('Pet is now available for adoption.')),
               );
             } catch (e) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Failed to request adoption.')),
+                SnackBar(content: Text('Failed to give up pet.')),
               );
             }
           },
-          child: Text('Request Adoption'),
+          child: Text('Give Up Pet'),
         ),
       ),
     );
   }
 }
+

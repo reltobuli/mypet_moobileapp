@@ -5,57 +5,61 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:mypetapp/screens/home.screen.dart';
 import 'package:mypetapp/screens/signup.screen.dart';
 
+
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final storage = FlutterSecureStorage();
 
-  Future<void> _login(BuildContext context, String email, String password) async {
-    final Uri uri = Uri.parse('http://127.0.0.1:8000/api/Petowner/login');
+Future<void> _login(BuildContext context, String email, String password) async {
+  final Uri uri = Uri.parse('http://127.0.0.1:8000/api/Petowner/login');
 
-    try {
-      final response = await http.post(
-        uri,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-          'password': password,
-        }),
+  try {
+    final response = await http.post(
+      uri,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'email': email,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // Successful login
+      final responseData = jsonDecode(response.body);
+      final token = responseData['token'];
+      final userId = responseData['user']['id']; // Retrieve user ID
+
+      // Save token and user ID to secure storage
+      await storage.write(key: 'token', value: token);
+      await storage.write(key: 'userId', value: userId.toString());
+
+      // Navigate to home screen or profile page
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+      print('Login successful');
+    } else {
+      // Handle login failure
+      print('Login failed: ${response.body}');
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Login Failed'),
+          content: Text('Invalid username or password: ${response.body}'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
       );
-
-      if (response.statusCode == 200) {
-        // Successful login
-        final responseData = jsonDecode(response.body);
-        final token = responseData['token']; // Extract token from response
-
-        // Save token to secure storage
-        await storage.write(key: 'token', value: token);
-
-        // Navigate to home screen or profile page
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
-        print('Login successful');
-      } else {
-        // Handle login failure
-        print('Login failed: ${response.body}');
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Login Failed'),
-            content: Text('Invalid username or password: ${response.body}'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (e) {
-      print('Error during login: $e');
-      // Handle error, e.g., show error message to user
     }
+  } catch (e) {
+    print('Error during login: $e');
+    // Handle error, e.g., show error message to user
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
