@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'addpet.screen.dart';
 import 'profile_screen.dart';
+import 'editpetprofile.screen.dart';
 
 import 'reportmissingpet_screen.dart';
 import 'shelters.screen.dart';
@@ -141,6 +142,15 @@ class HomeScreen extends StatelessWidget {
               );
             },
             child: Text('Generate QRcode'),
+          ),
+           ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => PetProfilePage()),
+              );
+            },
+            child: Text(' Pet profile'),
           ),
          
         ],

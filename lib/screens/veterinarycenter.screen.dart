@@ -9,17 +9,17 @@ class VeterinaryCenterListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Veterinary Centers'),
+        title: const Text('Veterinary Centers'),
       ),
       body: FutureBuilder<List<VeterinaryCenter>>(
         future: fetchVeterinaryCenters(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text('No veterinary centers available'));
+            return const Center(child: Text('No veterinary centers available'));
           } else {
             final centers = snapshot.data!;
             return ListView.builder(
