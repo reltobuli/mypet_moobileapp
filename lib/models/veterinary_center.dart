@@ -5,12 +5,15 @@ class VeterinaryCenter {
   final String address;
   final String phoneNumber;
   final String city;
+    final String rating;
+
 
   VeterinaryCenter({
     required this.id,
     required this.name,
     required this.address,
     required this.phoneNumber,
+    required this.rating,
     required this.city,
   });
 
@@ -18,9 +21,11 @@ class VeterinaryCenter {
     return VeterinaryCenter(
       id: json['id'],
       name: json['name'],
-      address: json['address'],
+      
       phoneNumber: json['phone_number'],
+      rating: json['rating'],
       city: json['city'],
+      address: json['address'],
     );
   }
 }

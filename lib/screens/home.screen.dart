@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mypetapp/screens/requests.screen.dart';
 import 'adoptpet.screen.dart';
-
 import 'addpet.screen.dart';
 import 'profile_screen.dart';
 import 'petprofile.screen.dart';
@@ -11,11 +11,21 @@ import 'veterinarycenter.screen.dart';
 import 'instructions.screen.dart';
 import 'qrcode.dart';
 import '../models/missingpet.dart';
+import 'notifaction.screen.dart';
+import 'package:mypetapp/screens/adoptpet.screen.dart'; // Import the correct file
+
+
+
+
+
+
 
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
+
+
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
@@ -23,7 +33,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = <Widget>[
     HomeScreen(),
-    Center(child: Text('Notifications Page')),
+    NotificationsPage(),
     AddPetPage(),
     EditProfilePage(),
   ];
