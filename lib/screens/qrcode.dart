@@ -9,18 +9,38 @@ class QRCodePage extends StatefulWidget {
 
 class _QRCodePageState extends State<QRCodePage> {
   String? qrCodeSvg;
+  final TextEditingController _controller = TextEditingController();
+  bool _isLoading = false;
 
-  Future<void> generateQRCode(String data) async {
-    final response = await http.get(
-      Uri.parse('http://127.0.0.1:8000/api/qrcode?data=${Uri.encodeComponent(data)}'),
-    );
+  Future<void> generateQRCode(String petId) async {
+    setState(() {
+      _isLoading = true; // Show loading indicator
+    });
 
-    if (response.statusCode == 200) {
+    try {
+      final response = await http.get(
+        Uri.parse('http://127.0.0.1:8000/qrcode/$petId'),
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          qrCodeSvg = response.body;
+        });
+      } else {
+        // Show error message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to generate QR code: ${response.reasonPhrase}')),
+        );
+      }
+    } catch (e) {
+      // Handle error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
       setState(() {
-        qrCodeSvg = response.body;
+        _isLoading = false; // Hide loading indicator
       });
-    } else {
-      throw Exception('Failed to generate QR code');
     }
   }
 
@@ -35,35 +55,39 @@ class _QRCodePageState extends State<QRCodePage> {
         child: Column(
           children: [
             TextField(
+              controller: _controller,
               decoration: InputDecoration(
-                labelText: 'Enter data for QR Code',
+                labelText: 'Enter Pet ID for QR Code',
               ),
-              onSubmitted: (value) {
-                generateQRCode(value);
-              },
+              keyboardType: TextInputType.number,
             ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                generateQRCode('Example Data'); // Replace with your data
+                String petId = _controller.text;
+                if (petId.isNotEmpty) {
+                  generateQRCode(petId);
+                }
               },
               child: Text('Generate QR Code'),
             ),
             SizedBox(height: 20),
-            qrCodeSvg != null
-                ? Expanded(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        width: double.infinity,
-                        height: 300,
-                        child: SvgPicture.string(
-                          qrCodeSvg!,
-                          fit: BoxFit.contain,
+            _isLoading
+                ? CircularProgressIndicator() // Show loading indicator
+                : qrCodeSvg != null
+                    ? Expanded(
+                        child: SingleChildScrollView(
+                          child: Container(
+                            width: double.infinity,
+                            height: 300,
+                            child: SvgPicture.string(
+                              qrCodeSvg!,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  )
-                : Container(),
+                      )
+                    : Container(),
           ],
         ),
       ),
@@ -71,8 +95,5 @@ class _QRCodePageState extends State<QRCodePage> {
   }
 }
 
-void main() {
-  runApp(MaterialApp(
-    home: QRCodePage(),
-  ));
-}
+
+

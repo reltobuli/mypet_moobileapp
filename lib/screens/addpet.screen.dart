@@ -5,8 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mypetapp/screens/qrcode.dart';
 
-final storage = FlutterSecureStorage();
+final storage = const FlutterSecureStorage();
 
 class ImageUploadService {
   Future<http.Response> uploadImage({
@@ -136,12 +137,12 @@ class _AddPetPageState extends State<AddPetPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Success'),
+        title: const Text('Success'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -152,12 +153,12 @@ class _AddPetPageState extends State<AddPetPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
+        title: const Text('Error'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -168,32 +169,70 @@ class _AddPetPageState extends State<AddPetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Pet'),
+        title: const Text(
+          'Add Pet',
+          style: TextStyle(color: Color.fromARGB(255, 69, 129, 95)),
+        ),
+        backgroundColor: const Color.fromARGB(255, 249, 222, 232),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(35.0),
           child: Column(
             children: [
               ElevatedButton(
                 onPressed: _selectImage,
-                child: _imageFile == null ? Text('Upload Image') : Text('Image Selected'),
+                child: _imageFile == null
+                    ? const Text(
+                        'Upload Image',
+                        style: TextStyle(color: Color.fromARGB(255, 248, 237, 241), fontSize: 17),
+                        
+                      )
+                    : const Text('Image Selected',),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 147, 177, 148),
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildTextField(label: 'User ID', controller: userIdController),
+              const SizedBox(height: 10),
               _buildTextField(label: 'Name', controller: nameController),
+              const SizedBox(height: 10),
               _buildTextField(label: 'Type', controller: typeController),
+              const SizedBox(height: 10),
               _buildTextField(label: 'Gender', controller: genderController),
+              const SizedBox(height: 10),
               _buildTextField(label: 'Age', controller: ageController),
+              const SizedBox(height: 10),
               _buildTextField(label: 'Color', controller: colorController),
+              const SizedBox(height: 10),
               _buildTextField(label: 'Address', controller: addressController),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
-                      onPressed: addPet,
-                      child: Text('Add Pet'),
+                      onPressed: () {
+                       Navigator.push(context, MaterialPageRoute(builder: (context) => QRCodePage()));
+
+                      },
+                      child: const Text(
+                        'QR Code',
+                        style: TextStyle(color: Color.fromARGB(255, 69, 129, 95)),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 249, 222, 232),
+                      ),
                     ),
+              ElevatedButton(
+                onPressed: addPet,
+                child: const Text(
+                  'Add Pet',
+                  style: TextStyle(color: Color.fromARGB(255, 69, 129, 95)),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 249, 222, 232),
+                ),
+              ),
             ],
           ),
         ),
@@ -206,17 +245,21 @@ class _AddPetPageState extends State<AddPetPage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 69, 129, 95)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.grey),
+          borderRadius: BorderRadius.circular(10.0),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+        focusedBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black),
+          borderRadius: BorderRadius.circular(10.0),
         ),
       ),
     );
   }
 }
+
+
 
 
 

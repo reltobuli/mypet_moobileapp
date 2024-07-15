@@ -7,7 +7,6 @@ class VeterinaryCenter {
   final String city;
     final String rating;
 
-
   VeterinaryCenter({
     required this.id,
     required this.name,
@@ -15,6 +14,7 @@ class VeterinaryCenter {
     required this.phoneNumber,
     required this.rating,
     required this.city,
+
   });
 
   factory VeterinaryCenter.fromJson(Map<String, dynamic> json) {

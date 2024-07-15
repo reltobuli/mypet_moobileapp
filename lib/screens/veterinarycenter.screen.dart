@@ -7,9 +7,13 @@ class VeterinaryCenterListPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 237, 241),
       appBar: AppBar(
-        title: const Text('Veterinary Centers'),
-        backgroundColor: Color.fromARGB(255, 233, 134, 171),
+        title: const Text('Veterinary Centers',
+        style: TextStyle( fontSize: 30,
+        color: Color.fromARGB(255, 248, 237, 241),
+        ),),
+        backgroundColor: const Color.fromARGB(255, 147, 177, 148),
       ),
       body: FutureBuilder<List<VeterinaryCenter>>(
         future: fetchVeterinaryCenters(),
@@ -27,7 +31,7 @@ class VeterinaryCenterListPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final center = centers[index];
                 return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 30.0),
+                  padding: const EdgeInsets.only(top: 50.0, left: 40 , right: 40),
                   child: GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -38,9 +42,11 @@ class VeterinaryCenterListPage extends StatelessWidget {
                       );
                     },
                     child: Card(
+                      color: Color.fromARGB(255, 255, 255, 255),
                       elevation: 5,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
+                        
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(20.0),
@@ -59,26 +65,27 @@ class VeterinaryCenterListPage extends StatelessWidget {
                                 children: [
                                   Text(
                                     center.name,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.teal[800],
+                                      fontWeight: FontWeight.normal,
+                                      color: Color.fromARGB(255, 9, 123, 13),
+                                  
                                     ),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     center.address,
-                                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                                    style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Phone: ${center.phoneNumber}',
-                                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                                    style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 0, 0, 0)),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'City: ${center.city}',
-                                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                                    style: const TextStyle(fontSize: 16, color: Color.fromARGB(255, 6, 0, 0)),
                                   ),
                                 ],
                               ),

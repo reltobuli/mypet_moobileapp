@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:mypetapp/screens/login.screen.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -18,7 +19,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController passwordController = TextEditingController();
 
   bool _isLoading = false;
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   String? _token;
 
   @override
@@ -26,7 +27,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
     super.initState();
     _fetchToken();
   }
-
+Future<void> _logout(BuildContext context) async {
+    await storage.delete(key: 'token');
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+      (route) => false,
+    );
+  }
   Future<void> _fetchToken() async {
     try {
       final token = await storage.read(key: 'token');
@@ -141,53 +149,115 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     
+      backgroundColor:  Color.fromARGB(255, 248, 237, 241),
+      appBar: AppBar(
+        title: const Text('Profile',
+        style: TextStyle(
+          color: Color.fromARGB(255, 9, 123, 13),
+         
+        ),),
+        backgroundColor: Color.fromARGB(255, 248, 237, 241),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+              Navigator.of(context).pop();
+          },
+        ),
+      ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    TextField(
+                   
+                    const SizedBox(height: 20),
+                    _buildTextField(
                       controller: fullnameController,
-                      decoration: InputDecoration(labelText: 'Full Name'),
+                      labelText: 'Full Name',
+                      icon: Icons.person,
                     ),
-                    TextField(
+                    _buildTextField(
                       controller: phoneNumberController,
-                      decoration: InputDecoration(labelText: 'Phone Number'),
+                      labelText: 'Phone Number',
+                      icon: Icons.phone,
                     ),
-                    TextField(
+                    _buildTextField(
                       controller: genderController,
-                      decoration: InputDecoration(labelText: 'Gender'),
+                      labelText: 'Gender',
+                      icon: Icons.wc,
                     ),
-                    TextField(
+                    _buildTextField(
                       controller: dateOfBirthController,
-                      decoration : InputDecoration(labelText: 'Date of Birth'),
+                      labelText: 'Date of Birth',
+                      icon: Icons.calendar_today,
                     ),
-                    TextField(
+                    _buildTextField(
                       controller: emailController,
-                      decoration: InputDecoration(labelText: 'Email'),
+                      labelText: 'Email',
+                      icon: Icons.email,
                     ),
-                    TextField(
+                    _buildTextField(
                       controller: cityController,
-                      decoration: InputDecoration(labelText: 'City'),
+                      labelText: 'City',
+                      icon: Icons.location_city,
                     ),
-                    TextField(
+                    _buildTextField(
                       controller: passwordController,
-                      decoration: InputDecoration(labelText: 'Password'),
+                      labelText: 'Password',
+                      icon: Icons.lock,
                       obscureText: true,
                     ),
-                    SizedBox(height: 60),
+                    const SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: updateProfile,
-                      child: Text('Update Profile'),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
+                        child: Text('Update Profile',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 9, 123, 13), 
+                        ),),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 18),
+                        
+                      ),
                     ),
-                    SizedBox(height: 20),
-                  ],
+                    const SizedBox(height: 20),
+                
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => _logout(context),
+          ),
+        ],
+                  
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String labelText,
+    required IconData icon,
+    bool obscureText = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: TextField(
+     
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        obscureText: obscureText,
+      ),
     );
   }
 }

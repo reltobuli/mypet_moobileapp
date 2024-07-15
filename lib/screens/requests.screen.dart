@@ -89,51 +89,141 @@ class _AdoptionPageState extends State<AdoptionPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Adoptable Pets'),
+        title: Text(
+          'Adoptable Pets',
+          style: TextStyle(
+            color: Color.fromARGB(255, 3, 124, 61),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 248, 237, 241),
       ),
       body: _isLoading
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemCount: _adoptablePets.length,
-              itemBuilder: (context, index) {
-                var pet = _adoptablePets[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(pet['name']),
-                    subtitle: Text('${pet['type']}, ${pet['age']} years old'),
-                    trailing: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            title: Text('Confirm Adoption'),
-                            content: Text('Do you want to adopt ${pet['name']}?'),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Cancel'),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  sendAdoptionRequest(pet['id'].toString());
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Confirm'),
-                              ),
-                            ],
+          : Padding(
+              padding: const EdgeInsets.only(top:60,left:10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Pets Available for Adoption',
+                    style: TextStyle(
+                      fontSize: 35,
+                      fontFamily: 'Impact',
+                      color: Color.fromARGB(255, 4, 110, 55),
+                    ),
+                  ),
+                  const SizedBox(height: 50),
+                  SizedBox(
+                    height: 340, // Adjust height as needed
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _adoptablePets.length,
+                      itemBuilder: (context, index) {
+                        var pet = _adoptablePets[index];
+                        return Card(
+                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Container(
+                            width: 220,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                pet['picture'] != null
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(15),
+                                          topRight: Radius.circular(15),
+                                        ),
+                                        child: Image.network(
+                                          'http://127.0.0.1:8000/storage/pictures/${pet['picture']}',
+                                          height: 190,
+                                          width: double.infinity,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) {
+                                            return Icon(Icons.pets, size: 150);
+                                          },
+                                        ),
+                                      )
+                                    : Icon(Icons.pets, size: 150),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        pet['name'],
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Color.fromARGB(255, 3, 124, 61),
+                                        ),
+                                      ),
+                                      Text('${pet['type']}, ${pet['age']} years old'),
+                                      const SizedBox(height: 8),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text('Confirm Adoption'),
+                                              content: Text('Do you want to adopt ${pet['name']}?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    sendAdoptionRequest(pet['id'].toString());
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('Confirm'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Adopt',
+                                          style: TextStyle(
+                                            color: Color.fromARGB(255, 4, 90, 17),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
-                      child: Text('Adopt'),
                     ),
                   ),
-                );
-              },
+                ],
+              ),
             ),
     );
   }
 }
+
+
+
+

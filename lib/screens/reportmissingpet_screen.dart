@@ -19,7 +19,8 @@ class ImageUploadService {
     required String address,
     required String qrCode,
     required String token,
-    required String petId, // Added petId parameter
+    required String petId,
+    required String phone_number,
   }) async {
     final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/report-missing-pet');
 
@@ -36,7 +37,8 @@ class ImageUploadService {
       'color': color,
       'address': address,
       'qrcode': qrCode,
-      'pet_id': petId.toString(), // Include pet_id in fields
+      'pet_id': petId,
+      'phone_number': phone_number,  // Add phone_number field to the API request.
     });
 
     request.files.add(await http.MultipartFile.fromPath(
@@ -45,13 +47,10 @@ class ImageUploadService {
       contentType: MediaType('image', 'jpeg'),
     ));
 
-    // Send request
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
-    // Process response
     if (response.statusCode == 200) {
-      print('Response body: ${response.body}');
       return response;
     } else {
       throw Exception('Failed to report missing pet: ${response.reasonPhrase}');
@@ -71,14 +70,13 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
   final TextEditingController ageController = TextEditingController();
   final TextEditingController colorController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-    final TextEditingController petIdController = TextEditingController(); 
+  final TextEditingController petIdController = TextEditingController();
   final TextEditingController qrCodeController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
 
   File? _imageFile;
   bool _isLoading = false;
   final ImageUploadService _imageUploadService = ImageUploadService();
-
-  int petId = 1; // Example pet ID, replace with actual logic to get pet ID
 
   Future<void> _selectImage() async {
     final pickedFile = await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -87,9 +85,6 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
       setState(() {
         _imageFile = File(pickedFile.path);
       });
-      print('Image selected: ${_imageFile?.path}');
-    } else {
-      print('No image selected.');
     }
   }
 
@@ -104,7 +99,7 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     });
 
     try {
-      String? token = await storage.read(key: 'token'); // Retrieve token
+      String? token = await storage.read(key: 'token');
 
       if (token == null) {
         _showError('Token not found');
@@ -113,9 +108,6 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
         });
         return;
       }
-
-      print('Token retrieved: $token');
-      print('Attempting to upload image and report missing pet...');
 
       var response = await _imageUploadService.uploadImage(
         imageFile: _imageFile!,
@@ -126,22 +118,17 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
         color: colorController.text,
         address: addressController.text,
         qrCode: qrCodeController.text,
-         petId: petIdController.text, 
-        token: token, // Pass token to service method
-         // Pass petId to service method
+        petId: petIdController.text,
+        phone_number: phoneNumberController.text,
+        token: token,
       );
-
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
         _showSuccess('Pet reported successfully');
       } else {
-        var responseBody = jsonDecode(response.body);
-        _showError('Error: ${response.reasonPhrase}, Response Body: $responseBody');
+        _showError('Error: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error during image upload: $e');
       _showError('Error: $e');
     } finally {
       setState(() {
@@ -186,32 +173,74 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Report Missing Pet'),
+        title: Text(
+          'Report Missing Pet',
+          style: TextStyle(
+            color: Color.fromARGB(255, 3, 124, 61),
+          ),
+        ),
+        backgroundColor: Color.fromARGB(255, 248, 237, 241),
       ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              ElevatedButton(
-                onPressed: _selectImage,
-                child: _imageFile == null ? Text('Upload Image') : Text('Image Selected'),
+              GestureDetector(
+                onTap: _selectImage,
+                child: Container(
+                  width: double.infinity,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color.fromARGB(255,  4, 133, 8), width: 2),
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.teal[50],
+                  ),
+                  child: _imageFile == null
+                      ? Center(child: Text('Tap to Upload Image', style: TextStyle(color: Colors.teal)))
+                      : ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.file(
+                            _imageFile!,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _buildTextField(label: 'Name', controller: nameController),
+              const SizedBox(height: 20), // Add space between text fields
               _buildTextField(label: 'Type', controller: typeController),
+              const SizedBox(height: 20), // Add space between text fields
               _buildTextField(label: 'Gender', controller: genderController),
+              const SizedBox(height: 20), // Add space between text fields
               _buildTextField(label: 'Age', controller: ageController),
+              const SizedBox(height: 20), // Add space between text fields
               _buildTextField(label: 'Color', controller: colorController),
+              const SizedBox(height: 20), // Add space between text fields
               _buildTextField(label: 'Address', controller: addressController),
-               _buildTextField(label: 'Pet ID', controller: petIdController), 
+              const SizedBox(height: 20), // Add space between text fields
+              _buildTextField(label: 'Pet ID', controller: petIdController),
+              const SizedBox(height: 20), // Add space between text fields
               _buildTextField(label: 'QR Code', controller: qrCodeController),
-              SizedBox(height: 20),
+              const SizedBox(height: 20), 
+              _buildTextField(label: 'Phone Number', controller: phoneNumberController),
+              const SizedBox(height: 20), // Add space before the button
               _isLoading
                   ? CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: reportMissingPet,
-                      child: Text('Report Missing Pet'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 248, 237, 245), // Background color
+                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ),
+                      child: Text(
+                        'Report Missing Pet',
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 7, 79, 41),
+                        ),
+                      ),
                     ),
             ],
           ),
@@ -225,17 +254,22 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.grey),
+        labelStyle: TextStyle(color: Color.fromARGB(255, 3, 124, 61)),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color.fromARGB(255, 3, 124, 61)),
+          borderRadius: BorderRadius.circular(10),
         ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.black),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Color.fromARGB(255, 3, 124, 61)),
+          borderRadius: BorderRadius.circular(10),
         ),
       ),
     );
   }
 }
+
+
+
 
   
 

@@ -9,7 +9,7 @@ import 'package:mypetapp/screens/signup.screen.dart';
 class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
 
 Future<void> _login(BuildContext context, String email, String password) async {
   final Uri uri = Uri.parse('http://127.0.0.1:8000/api/Petowner/login');
@@ -64,7 +64,9 @@ Future<void> _login(BuildContext context, String email, String password) async {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 248, 237, 241),
       body: SafeArea(
+        
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -74,7 +76,7 @@ Future<void> _login(BuildContext context, String email, String password) async {
                 child: Text(
                   'Login',
                   style: TextStyle(
-                    color: Color.fromARGB(255, 3, 133, 125),
+                    color: Color.fromARGB(255,4, 133, 8),
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
                   ),
@@ -93,14 +95,20 @@ Future<void> _login(BuildContext context, String email, String password) async {
                 ),
                 child: const Text(
                   'Login',
-                  style: TextStyle(color: Colors.black),
+                  style: TextStyle(color:Color.fromARGB(255, 4, 113, 8)),
                 ),
               ),
+              const SizedBox(height:15),
+              const Text('Do not have an account?'),
               TextButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) => SignupPage()));
                 },
-                child: Text('Sign up'),
+                child: const Text('Sign up',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 4, 113, 8)
+                ),),
               ),
             ],
           ),
@@ -117,9 +125,9 @@ Future<void> _login(BuildContext context, String email, String password) async {
         obscureText: obscureText,
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
+          labelStyle: const TextStyle(color: Color.fromARGB(255,4, 133, 8)),
           enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Color.fromARGB(255, 3, 133, 125)),
+            borderSide: BorderSide(color: Color.fromARGB(255, 4, 133, 8)),
           ),
           focusedBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.black),

@@ -5,10 +5,14 @@ import 'package:mypetapp/screens/boarding.screen.dart';
 import 'package:mypetapp/screens/login.screen.dart';
 import 'package:mypetapp/screens/home.screen.dart';
 
-
-class SignupPage extends StatelessWidget {
+class SignupPage extends StatefulWidget {
   SignupPage({Key? key}) : super(key: key);
-  
+
+  @override
+  _SignupPageState createState() => _SignupPageState();
+}
+
+class _SignupPageState extends State<SignupPage> {
   final TextEditingController firstnameController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
@@ -16,7 +20,7 @@ class SignupPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  
+  bool _isPasswordVisible = false;
 
   Future<void> register(BuildContext context) async {
     final Uri uri = Uri.parse('http://127.0.0.1:8000/api/Petowner/register');
@@ -28,12 +32,12 @@ class SignupPage extends StatelessWidget {
         body: jsonEncode({
           'fullname': firstnameController.text.trim(),
           'phone_number': phoneController.text.trim(),
-          'gender':genderController.text.trim(),
+          'gender': genderController.text.trim(),
           'date_of_birth': dateOfBirthController.text.trim(),
           'email': emailController.text.trim(),
           'city': cityController.text.trim(),
           'password': passwordController.text.trim(),
-       }),
+        }),
       );
 
       print('Response status: ${response.statusCode}');
@@ -82,14 +86,15 @@ class SignupPage extends StatelessWidget {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: Color.fromARGB(255, 248, 237, 241),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 248, 237, 241),
         leading: IconButton(
           onPressed: () {
             Navigator.of(context).pop(BoardingPage());
@@ -114,7 +119,7 @@ class SignupPage extends StatelessWidget {
                     child: Text(
                       'CREATE AN ACCOUNT',
                       style: TextStyle(
-                        color: Color.fromARGB(255, 3, 133, 125),
+                        color: Color.fromARGB(255, 4, 133, 8),
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
                       ),
@@ -131,27 +136,9 @@ class SignupPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 10),
                       Expanded(
-                         child: _buildTextField(
+                        child: _buildTextField(
                           label: 'Phone number',
                           controller: phoneController,
-                        ),
-                      ),
-                    ]
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                         Expanded(
-                        child: _buildTextField(
-                          label: 'gender',
-                          controller: genderController,
-                        ),
-                      ),
-                        const SizedBox(width: 10),
-                      Expanded(
-                        child: _buildTextField(
-                          label: 'DOB',
-                          controller:dateOfBirthController ,
                         ),
                       ),
                     ],
@@ -159,35 +146,60 @@ class SignupPage extends StatelessWidget {
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                       Expanded(
+                      Expanded(
                         child: _buildTextField(
-                          label: 'email',
+                          label: 'Gender',
+                          controller: genderController,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: _buildTextField(
+                          label: 'DOB',
+                          controller: dateOfBirthController,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildTextField(
+                          label: 'Email',
                           controller: emailController,
                         ),
                       ),
-                    const SizedBox(width: 10),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: _buildTextField(
-                          label: 'city',
+                          label: 'City',
                           controller: cityController,
                         ),
                       ),
-                      ],
-                  ),                
+                    ],
+                  ),
                   const SizedBox(height: 20),
-                   Row(
+                  Row(
                     children: [
-                       Expanded(
+                      Expanded(
                         child: _buildTextField(
-                          label: 'password',
+                          label: 'Password',
                           controller: passwordController,
+                          obscureText: !_isPasswordVisible,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _isPasswordVisible = !_isPasswordVisible;
+                              });
+                            },
+                          ),
                         ),
                       ),
-               
-                    
-                     
-                      ],
-                    
+                    ],
                   ),
                   const SizedBox(height: 30),
                   Row(
@@ -196,11 +208,11 @@ class SignupPage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () => register(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 3, 133, 125),
+                            backgroundColor: Color.fromARGB(255, 255, 255, 255),
                           ),
                           child: const Text(
                             'Register',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Color.fromARGB(255,  4, 133, 8)),
                           ),
                         ),
                       ),
@@ -208,7 +220,7 @@ class SignupPage extends StatelessWidget {
                       const Text(
                         "Already have an account?",
                         style: TextStyle(
-                          color: Color.fromARGB(255, 3, 133, 125),
+                          color: Color.fromARGB(255,  4, 133, 8),
                         ),
                       ),
                     ],
@@ -227,7 +239,7 @@ class SignupPage extends StatelessWidget {
                           child: const Text(
                             'Login',
                             style: TextStyle(
-                              color: Color.fromARGB(255, 3, 133, 125),
+                              color: Color.fromARGB(255,  4, 133, 8),
                               decoration: TextDecoration.underline,
                             ),
                           ),
@@ -244,23 +256,30 @@ class SignupPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTextField({required String label, TextEditingController? controller, bool obscureText = false}) {
+  Widget _buildTextField({
+    required String label,
+    TextEditingController? controller,
+    bool obscureText = false,
+    Widget? suffixIcon,
+  }) {
     return TextField(
       controller: controller,
       obscureText: obscureText,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 133, 125)),
+        labelStyle: const TextStyle(color: Color.fromARGB(255,  4, 133, 8)),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),
         ),
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.black),
         ),
+        suffixIcon: suffixIcon,
       ),
     );
   }
 }
+
 
 
 
