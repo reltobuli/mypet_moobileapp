@@ -6,7 +6,7 @@ import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = FlutterSecureStorage();
+final storage = const FlutterSecureStorage();
 
 class ImageUploadService {
   Future<http.Response> uploadImage({
@@ -141,12 +141,12 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Success'),
+        title: const Text('Success'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -157,12 +157,12 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Error'),
+        title: const Text('Error'),
         content: Text(message),
         actions: <Widget>[
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -173,13 +173,13 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Report Missing Pet',
           style: TextStyle(
             color: Color.fromARGB(255, 3, 124, 61),
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 248, 237, 241),
+        backgroundColor: const Color.fromARGB(255, 248, 237, 241),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -192,12 +192,12 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
                   width: double.infinity,
                   height: 150,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Color.fromARGB(255,  4, 133, 8), width: 2),
+                    border: Border.all(color: const Color.fromARGB(255,  4, 133, 8), width: 2),
                     borderRadius: BorderRadius.circular(15),
                     color: Colors.teal[50],
                   ),
                   child: _imageFile == null
-                      ? Center(child: Text('Tap to Upload Image', style: TextStyle(color: Colors.teal)))
+                      ? const Center(child: Text('Tap to Upload Image', style: TextStyle(color: Colors.teal)))
                       : ClipRRect(
                           borderRadius: BorderRadius.circular(15),
                           child: Image.file(
@@ -209,33 +209,33 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
               ),
               const SizedBox(height: 20),
               _buildTextField(label: 'Name', controller: nameController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'Type', controller: typeController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'Gender', controller: genderController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'Age', controller: ageController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'Color', controller: colorController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'Address', controller: addressController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'Pet ID', controller: petIdController),
-              const SizedBox(height: 20), // Add space between text fields
+              const SizedBox(height: 20), 
               _buildTextField(label: 'QR Code', controller: qrCodeController),
               const SizedBox(height: 20), 
               _buildTextField(label: 'Phone Number', controller: phoneNumberController),
-              const SizedBox(height: 20), // Add space before the button
+              const SizedBox(height: 20), 
               _isLoading
-                  ? CircularProgressIndicator()
+                  ? const CircularProgressIndicator()
                   : ElevatedButton(
                       onPressed: reportMissingPet,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 248, 237, 245), // Background color
-                        padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Report Missing Pet',
                         style: TextStyle(
                           color: Color.fromARGB(255, 7, 79, 41),
@@ -254,13 +254,13 @@ class _ReportMissingPetPageState extends State<ReportMissingPetPage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: Color.fromARGB(255, 3, 124, 61)),
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 3, 124, 61)),
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 3, 124, 61)),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 3, 124, 61)),
           borderRadius: BorderRadius.circular(10),
         ),
         focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(color: Color.fromARGB(255, 3, 124, 61)),
+          borderSide: const BorderSide(color: Color.fromARGB(255, 3, 124, 61)),
           borderRadius: BorderRadius.circular(10),
         ),
       ),

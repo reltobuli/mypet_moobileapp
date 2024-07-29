@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-final storage = FlutterSecureStorage();
+final storage = const FlutterSecureStorage();
 
 class AdoptionPage extends StatefulWidget {
   @override
@@ -77,6 +77,7 @@ class _AdoptionPageState extends State<AdoptionPage> {
 
       if (response.statusCode == 201) {
         print('Adoption request sent successfully');
+        _showSuccessDialog(); // Show success dialog
       } else {
         print('Failed to send adoption request: ${response.body}');
       }
@@ -85,21 +86,39 @@ class _AdoptionPageState extends State<AdoptionPage> {
     }
   }
 
+  void _showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Success'),
+        content: const Text('Adoption request sent successfully!'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Dismiss the dialog
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Adoptable Pets',
           style: TextStyle(
             color: Color.fromARGB(255, 3, 124, 61),
             fontWeight: FontWeight.bold,
           ),
         ),
-        backgroundColor: Color.fromARGB(255, 248, 237, 241),
+        backgroundColor: const Color.fromARGB(255, 248, 237, 241),
       ),
       body: _isLoading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
@@ -107,7 +126,7 @@ class _AdoptionPageState extends State<AdoptionPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Pets Available for Adoption',
                     style: TextStyle(
                       fontSize: 35,
@@ -124,7 +143,7 @@ class _AdoptionPageState extends State<AdoptionPage> {
                       itemBuilder: (context, index) {
                         var pet = _adoptablePets[index];
                         return Card(
-                          margin: EdgeInsets.symmetric(horizontal: 10),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(15),
                           ),
@@ -132,14 +151,14 @@ class _AdoptionPageState extends State<AdoptionPage> {
                             width: 220,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15),
-                              color: Color.fromARGB(255, 255, 255, 255),
+                              color: const Color.fromARGB(255, 255, 255, 255),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 pet['picture'] != null
                                     ? ClipRRect(
-                                        borderRadius: BorderRadius.only(
+                                        borderRadius: const BorderRadius.only(
                                           topLeft: Radius.circular(15),
                                           topRight: Radius.circular(15),
                                         ),
@@ -149,11 +168,11 @@ class _AdoptionPageState extends State<AdoptionPage> {
                                           width: double.infinity,
                                           fit: BoxFit.cover,
                                           errorBuilder: (context, error, stackTrace) {
-                                            return Icon(Icons.pets, size: 150);
+                                            return const Icon(Icons.pets, size: 150);
                                           },
                                         ),
                                       )
-                                    : Icon(Icons.pets, size: 150),
+                                    : const Icon(Icons.pets, size: 150),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
@@ -161,7 +180,7 @@ class _AdoptionPageState extends State<AdoptionPage> {
                                     children: [
                                       Text(
                                         pet['name'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
                                           color: Color.fromARGB(255, 3, 124, 61),
@@ -174,33 +193,33 @@ class _AdoptionPageState extends State<AdoptionPage> {
                                           showDialog(
                                             context: context,
                                             builder: (context) => AlertDialog(
-                                              title: Text('Confirm Adoption'),
+                                              title: const Text('Confirm Adoption'),
                                               content: Text('Do you want to adopt ${pet['name']}?'),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () {
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text('Cancel'),
+                                                  child: const Text('Cancel'),
                                                 ),
                                                 TextButton(
                                                   onPressed: () {
                                                     sendAdoptionRequest(pet['id'].toString());
                                                     Navigator.pop(context);
                                                   },
-                                                  child: Text('Confirm'),
+                                                  child: const Text('Confirm'),
                                                 ),
                                               ],
                                             ),
                                           );
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                                          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(20),
                                           ),
                                         ),
-                                        child: Text(
+                                        child: const Text(
                                           'Adopt',
                                           style: TextStyle(
                                             color: Color.fromARGB(255, 4, 90, 17),
@@ -223,6 +242,7 @@ class _AdoptionPageState extends State<AdoptionPage> {
     );
   }
 }
+
 
 
 

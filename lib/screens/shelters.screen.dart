@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/providers/api_service.dart';
+import 'package:mypetapp/screens/shelterdetails.dart';
 
 class ShelterListPage extends StatelessWidget {
   @override
@@ -10,7 +11,6 @@ class ShelterListPage extends StatelessWidget {
         title: const Text(
           'Shelters',
           style: TextStyle(
-   
             fontSize: 30,
             color: Color.fromARGB(255, 248, 237, 241),
           ),
@@ -36,7 +36,12 @@ class ShelterListPage extends StatelessWidget {
                   padding: const EdgeInsets.only(top: 50.0, left: 40, right: 40),
                   child: GestureDetector(
                     onTap: () {
-                      // Add navigation to shelter detail page if needed
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ShelterDetailPage(shelter: shelter),
+                        ),
+                      );
                     },
                     child: Card(
                       color: Color.fromARGB(255, 255, 255, 255),
@@ -48,12 +53,12 @@ class ShelterListPage extends StatelessWidget {
                         padding: const EdgeInsets.all(20.0),
                         child: Row(
                           children: [
-                           Image.asset(
-                          '/Users/raghad/Desktop/mypetapp/assets/cat.png', // Replace with actual image path
-                            width: 50,
-                            height: 50,
-                             fit: BoxFit.cover,
-                           ),
+                            Image.asset(
+                              '/Users/raghad/Desktop/mypetapp/assets/cat.png', // Replace with actual image path
+                              width: 50,
+                              height: 50,
+                              fit: BoxFit.cover,
+                            ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: Column(
@@ -65,12 +70,11 @@ class ShelterListPage extends StatelessWidget {
                                       fontSize: 18,
                                       fontWeight: FontWeight.normal,
                                       color: Color.fromARGB(255, 9, 123, 13),
-                                    
                                     ),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Address: ${shelter['address']}', // Assuming shelter data has phone number
+                                    'Address: ${shelter['address']}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Color.fromARGB(255, 0, 0, 0),
@@ -78,7 +82,7 @@ class ShelterListPage extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Phone: ${shelter['phone_number']}', // Assuming shelter data has phone number
+                                    'Phone: ${shelter['phone_number']}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Color.fromARGB(255, 0, 0, 0),
@@ -86,15 +90,15 @@ class ShelterListPage extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'City: ${shelter['city']}', // Assuming shelter data has city
+                                    'City: ${shelter['city']}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Color.fromARGB(255, 6, 0, 0),
                                     ),
                                   ),
-                                   const SizedBox(height: 8),
+                                  const SizedBox(height: 8),
                                   Text(
-                                    'Capacity: ${shelter['capacity']}', // Assuming shelter data has city
+                                    'Capacity: ${shelter['capacity']}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Color.fromARGB(255, 6, 0, 0),
@@ -117,3 +121,4 @@ class ShelterListPage extends StatelessWidget {
     );
   }
 }
+

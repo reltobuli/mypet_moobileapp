@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mypetapp/screens/signup.screen.dart';
-import 'package:mypetapp/screens/reportmissingpet_screen.dart';
 import 'package:mypetapp/screens/login.screen.dart';
-
 import '../models/missingpet.dart';
 
 class BoardingPage extends StatelessWidget {
@@ -17,7 +15,7 @@ class BoardingPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'MYPET',
+              'Pawprint',
               style: TextStyle(
                 fontSize: 50,
                 fontWeight: FontWeight.bold,
@@ -29,11 +27,8 @@ class BoardingPage extends StatelessWidget {
         ),
         backgroundColor: const Color.fromARGB(255, 248, 237, 241),
       ),
-      
       body: Stack(
-        
         children: [
-
           Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,

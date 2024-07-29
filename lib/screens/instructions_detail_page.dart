@@ -35,11 +35,19 @@ class InstructionDetailPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-             
               const SizedBox(height: 8),
-              Text(
-                '${instruction.details}',
-                style: const TextStyle(fontSize: 18, color: Color.fromARGB(255, 0, 0, 0)),
+              SizedBox(
+                width: double.infinity,  // Adjust the width as needed
+                height: 200,  // Adjust the height as needed
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      instruction.details,
+                      style: const TextStyle(fontSize: 18, color: Color.fromARGB(255, 0, 0, 0)),
+                    ),
+                  ),
+                ),
               ),
               const SizedBox(height: 40),
               Container(
@@ -55,7 +63,6 @@ class InstructionDetailPage extends StatelessWidget {
               ),
               const SizedBox(height: 60),
               // Scrollable Image Gallery
-              
             ],
           ),
         ),
@@ -63,3 +70,4 @@ class InstructionDetailPage extends StatelessWidget {
     );
   }
 }
+

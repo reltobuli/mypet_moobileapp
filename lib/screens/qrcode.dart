@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
+import 'dart:typed_data';
 
 class QRCodePage extends StatefulWidget {
   @override
@@ -8,28 +9,28 @@ class QRCodePage extends StatefulWidget {
 }
 
 class _QRCodePageState extends State<QRCodePage> {
-  String? qrCodeSvg;
+  Uint8List? qrCodeImage;
   final TextEditingController _controller = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> generateQRCode(String petId) async {
+  Future<void> generateQRCode(String petName) async {
     setState(() {
       _isLoading = true; // Show loading indicator
     });
 
     try {
       final response = await http.get(
-        Uri.parse('http://127.0.0.1:8000/qrcode/$petId'),
+        Uri.parse('http://127.0.0.1:8000/api/qrcode?pet_name=$petName'),
       );
 
       if (response.statusCode == 200) {
         setState(() {
-          qrCodeSvg = response.body;
+          qrCodeImage = response.bodyBytes; // Save the image bytes
         });
       } else {
         // Show error message
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to generate QR code: ${response.reasonPhrase}')),
+          SnackBar(content: Text('Failed to generate QR code: ${response.statusCode} ${response.reasonPhrase}')),
         );
       }
     } catch (e) {
@@ -48,7 +49,7 @@ class _QRCodePageState extends State<QRCodePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Generate QR Code'),
+        title: const Text('Generate QR Code'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -56,32 +57,36 @@ class _QRCodePageState extends State<QRCodePage> {
           children: [
             TextField(
               controller: _controller,
-              decoration: InputDecoration(
-                labelText: 'Enter Pet ID for QR Code',
+              decoration: const InputDecoration(
+                labelText: 'Enter Pet Name for QR Code',
               ),
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.text,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                String petId = _controller.text;
-                if (petId.isNotEmpty) {
-                  generateQRCode(petId);
+                String petName = _controller.text.trim();
+                if (petName.isNotEmpty) {
+                  generateQRCode(petName);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please enter a valid Pet Name')),
+                  );
                 }
               },
-              child: Text('Generate QR Code'),
+              child: const Text('Generate QR Code'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _isLoading
-                ? CircularProgressIndicator() // Show loading indicator
-                : qrCodeSvg != null
+                ? const CircularProgressIndicator() // Show loading indicator
+                : qrCodeImage != null
                     ? Expanded(
                         child: SingleChildScrollView(
                           child: Container(
                             width: double.infinity,
                             height: 300,
-                            child: SvgPicture.string(
-                              qrCodeSvg!,
+                            child: Image.memory(
+                              qrCodeImage!,
                               fit: BoxFit.contain,
                             ),
                           ),
@@ -94,6 +99,10 @@ class _QRCodePageState extends State<QRCodePage> {
     );
   }
 }
+
+
+
+
 
 
 

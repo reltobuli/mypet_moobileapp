@@ -5,12 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:mypetapp/screens/notifaction.screen.dart';
 import 'profile_screen.dart';
 import 'petprofile.screen.dart';
-import 'reportmissingpet_screen.dart';
-import 'package:mypetapp/screens/requests.screen.dart'; // Adjust the path if necessary
+import 'package:mypetapp/screens/requests.screen.dart'; 
 import 'shelters.screen.dart';
 import 'veterinarycenter.screen.dart';
 import 'instructions.screen.dart';
-import 'qrcode.dart';
 import '../models/missingpet.dart';
 import 'login.screen.dart';
 
@@ -70,7 +68,7 @@ class _HomePageState extends State<HomePage> {
             label: 'Profile',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.category),
+            icon: Icon(Icons.list),
             label: 'Categories',
           ),
         ],

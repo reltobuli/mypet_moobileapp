@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:mypetapp/screens/boarding.screen.dart';
 import 'package:mypetapp/screens/login.screen.dart';
 import 'package:mypetapp/screens/home.screen.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignupPage extends StatefulWidget {
   SignupPage({Key? key}) : super(key: key);
@@ -21,6 +22,8 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController cityController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isPasswordVisible = false;
+
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
   Future<void> register(BuildContext context) async {
     final Uri uri = Uri.parse('http://127.0.0.1:8000/api/Petowner/register');
@@ -43,7 +46,13 @@ class _SignupPageState extends State<SignupPage> {
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) { // Correct status code for successful registration
+        final responseData = jsonDecode(response.body);
+        final token = responseData['token'];
+
+        // Save token to secure storage
+        await storage.write(key: 'token', value: token);
+        // Navigate to home page
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
         print('Registration successful');
       } else {
@@ -92,7 +101,7 @@ class _SignupPageState extends State<SignupPage> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 248, 237, 241),
+      backgroundColor: const Color.fromARGB(255, 248, 237, 241),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 248, 237, 241),
         leading: IconButton(
@@ -208,11 +217,11 @@ class _SignupPageState extends State<SignupPage> {
                         child: ElevatedButton(
                           onPressed: () => register(context),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                            backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                           ),
                           child: const Text(
                             'Register',
-                            style: TextStyle(color: Color.fromARGB(255,  4, 133, 8)),
+                            style: TextStyle(color: Color.fromARGB(255, 4, 133, 8)),
                           ),
                         ),
                       ),
@@ -220,7 +229,7 @@ class _SignupPageState extends State<SignupPage> {
                       const Text(
                         "Already have an account?",
                         style: TextStyle(
-                          color: Color.fromARGB(255,  4, 133, 8),
+                          color: Color.fromARGB(255, 4, 133, 8),
                         ),
                       ),
                     ],
@@ -239,7 +248,7 @@ class _SignupPageState extends State<SignupPage> {
                           child: const Text(
                             'Login',
                             style: TextStyle(
-                              color: Color.fromARGB(255,  4, 133, 8),
+                              color: Color.fromARGB(255, 4, 133, 8),
                               decoration: TextDecoration.underline,
                             ),
                           ),
@@ -267,7 +276,7 @@ class _SignupPageState extends State<SignupPage> {
       obscureText: obscureText,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Color.fromARGB(255,  4, 133, 8)),
+        labelStyle: const TextStyle(color: Color.fromARGB(255, 4, 133, 8)),
         enabledBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),
         ),
@@ -279,6 +288,8 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 }
+
+
 
 
 

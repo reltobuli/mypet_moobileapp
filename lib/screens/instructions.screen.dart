@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:mypetapp/providers/api_service.dart'; // Make sure this path is correct
 import 'package:mypetapp/screens/instructions_detail_page.dart';
 import '../models/instruction.dart';
-import 'package:mypetapp/screens/instructions.screen.dart'; // Make sure this path is correct
 
 class InstructionListPage extends StatelessWidget {
   @override
@@ -77,11 +76,9 @@ class InstructionListPage extends StatelessWidget {
       ),
     ),
   );
-                 }
+               }
             );
-      
           }      
-           
           }
       )
     );

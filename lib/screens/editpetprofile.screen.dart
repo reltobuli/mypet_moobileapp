@@ -80,40 +80,60 @@ class _EditPetProfilePageState extends State<EditPetProfilePage> {
     }
   }
 
-  Future<void> updatePetProfile() async {
-    setState(() {
-      _isLoading = true;
-    });
+Future<void> updatePetProfile() async {
+  setState(() {
+    _isLoading = true;
+  });
 
-    try {
-      final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/pets/profile/update/${widget.petId}');
-      final request = http.MultipartRequest('POST', url)
-        ..headers['Authorization'] = 'Bearer $_token'
-        ..fields['name'] = nameController.text
-        ..fields['type'] = typeController.text
-        ..fields['gender'] = genderController.text
-        ..fields['age'] = ageController.text
-        ..fields['color'] = colorController.text
-        ..fields['address'] = addressController.text;
+  try {
+    final url = Uri.parse('http://127.0.0.1:8000/api/Petowner/pets/profile/update/${widget.petId}');
+    final request = http.MultipartRequest('POST', url)
+      ..headers['Authorization'] = 'Bearer $_token'
+      ..fields['name'] = nameController.text
+      ..fields['type'] = typeController.text
+      ..fields['gender'] = genderController.text
+      ..fields['age'] = ageController.text
+      ..fields['color'] = colorController.text
+      ..fields['address'] = addressController.text;
 
-      if (_image != null) {
-        request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
-      }
-
-      final response = await request.send();
-      if (response.statusCode == 200) {
-        print("Pet profile updated successfully");
-      } else {
-        print("Error: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("Exception: $e");
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
+    if (_image != null) {
+      request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
     }
+
+    final response = await request.send();
+    final responseBody = await response.stream.bytesToString();
+
+    if (response.statusCode == 200) {
+      print("Pet profile updated successfully");
+    } else {
+      print("Error: ${response.statusCode}");
+      print("Response body: $responseBody");  // Print the response body for debugging
+
+      // Displaying validation errors
+      final errorData = jsonDecode(responseBody);
+      if (response.statusCode == 422 && errorData is Map) {
+        errorData.forEach((field, errors) {
+          if (errors is List) {
+            for (var error in errors) {
+              print('$field: $error');
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('$field: $error')),
+              );
+            }
+          }
+        });
+      }
+    }
+  } catch (e) {
+    print("Exception: $e");
+  } finally {
+    setState(() {
+      _isLoading = false;
+    });
   }
+}
+
+
 
   Future<void> giveUpPet() async {
     setState(() {
@@ -238,15 +258,15 @@ class _EditPetProfilePageState extends State<EditPetProfilePage> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: updatePetProfile,
+                      style: ElevatedButton.styleFrom(
+                        textStyle: const TextStyle(fontSize: 18),
+                        backgroundColor: const Color.fromARGB(255, 248, 237, 241), // Button color
+                      ),
                       child: const Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 24.0),
                         child: Text('Update Profile',
                           style: TextStyle(color: Color.fromARGB(255, 9, 123, 13)),
                         ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        textStyle: const TextStyle(fontSize: 18),
-                        backgroundColor: const Color.fromARGB(255, 248, 237, 241), // Button color
                       ),
                     ),
                     const SizedBox(height: 20),
